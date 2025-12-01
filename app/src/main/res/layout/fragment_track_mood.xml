@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".TrackMoodFragment">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/bg_constraint_gradient">
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardView"
+            android:layout_width="350dp"
+            android:layout_height="510dp"
+            app:cardCornerRadius="10dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.32">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/textView2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="40dp"
+                    android:fontFamily="@font/inter_semibold"
+                    android:text="How are you feeling today?"
+                    android:textAlignment="center"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/textView3"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="32dp"
+                    android:layout_marginBottom="32dp"
+                    android:fontFamily="@font/inter_light"
+                    android:text=" Select your current mood"
+                    android:textAlignment="center"
+                    android:textSize="15sp" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/button3"
+                    style="@style/Widget.Material3.Button.OutlinedButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="55dp"
+                    android:layout_marginStart="43dp"
+                    android:layout_marginEnd="43dp"
+                    android:layout_marginBottom="22dp"
+                    android:fontFamily="@font/inter"
+                    android:shadowColor="#857A7A"
+                    android:text="Happy"
+                    android:textColor="#000000"
+                    android:textSize="24sp"
+                    app:cornerRadius="10dp"
+                    app:icon="@drawable/ic_smile"
+                    app:iconGravity="textEnd"
+                    app:iconPadding="5dp"
+                    app:iconSize="26dp"
+                    app:strokeColor="#8979FF"
+                    app:strokeWidth="1.5dp" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/button4"
+                    style="@style/Widget.Material3.Button.OutlinedButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="55dp"
+                    android:layout_marginStart="43dp"
+                    android:layout_marginEnd="43dp"
+                    android:layout_marginBottom="22dp"
+                    android:fontFamily="@font/inter"
+                    android:text="Calm"
+                    android:textColor="#000000"
+                    android:textSize="24sp"
+                    app:cornerRadius="10dp"
+                    app:icon="@drawable/ic_calm"
+                    app:iconGravity="textEnd"
+                    app:iconPadding="5dp"
+                    app:iconSize="29dp"
+                    app:iconTint="#FF928A"
+                    app:strokeColor="#FF928A"
+                    app:strokeWidth="1.5dp" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/button5"
+                    style="@style/Widget.Material3.Button.OutlinedButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="55dp"
+                    android:layout_marginStart="43dp"
+                    android:layout_marginEnd="43dp"
+                    android:layout_marginBottom="22dp"
+                    android:fontFamily="@font/inter"
+                    android:text="Sad"
+                    android:textColor="#000000"
+                    android:textSize="24sp"
+                    app:cornerRadius="10dp"
+                    app:icon="@drawable/ic_sad"
+                    app:iconGravity="textEnd"
+                    app:iconPadding="5dp"
+                    app:iconSize="27dp"
+                    app:iconTint="#3CC3DF"
+                    app:strokeColor="#3CC3DF"
+                    app:strokeWidth="1.5dp" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/button6"
+                    style="@style/Widget.Material3.Button.OutlinedButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="55dp"
+                    android:layout_marginStart="43dp"
+                    android:layout_marginEnd="43dp"
+                    android:fontFamily="@font/inter"
+                    android:text="Stressed"
+                    android:textColor="#000000"
+                    android:textSize="24sp"
+                    app:cornerRadius="10dp"
+                    app:icon="@drawable/ic_stressed"
+                    app:iconGravity="textEnd"
+                    app:iconPadding="5dp"
+                    app:iconSize="25dp"
+                    app:iconTint="#FFAE4C"
+                    app:strokeColor="#FFAE4C"
+                    app:strokeWidth="1.5dp" />
+
+
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <TextView
+            android:id="@+id/textView4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/inter"
+            android:text="Your mood will be saved automatically"
+            android:textColor="#7D7C7C"
+            android:textSize="14sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/cardView"
+            app:layout_constraintVertical_bias="0.086" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/button8"
+            style="@style/Widget.Material3.Button.OutlinedButton"
+            android:layout_width="320dp"
+            android:layout_height="42dp"
+            android:fontFamily="@font/inter"
+            android:text="AI Music Suggestion"
+            android:textSize="16sp"
+            app:cornerRadius="10dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.494"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView4"
+            app:layout_constraintVertical_bias="0.15"
+            app:strokeColor="#7900E3" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</FrameLayout>
