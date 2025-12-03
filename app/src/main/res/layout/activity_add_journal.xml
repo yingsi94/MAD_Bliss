@@ -5,7 +5,8 @@
     android:id="@+id/svMain"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F5F5F5"
+    android:background="@drawable/gradient_bg"
+    android:fitsSystemWindows="true"
     tools:context=".AddJournalActivity">
 
     <LinearLayout
@@ -25,7 +26,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="?attr/selectableItemBackgroundBorderless"
-                android:src="@drawable/ic_launcher_foreground"
+                android:src="@android:drawable/ic_menu_revert"
                 app:tint="@android:color/black" />
 
             <TextView
@@ -43,7 +44,8 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             app:cardCornerRadius="12dp"
-            app:cardElevation="4dp">
+            app:cardElevation="4dp"
+            app:cardBackgroundColor="@android:color/white">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -55,7 +57,8 @@
                     android:id="@+id/etTitle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@android:color/transparent"
+                    android:background="@drawable/bg_input_field"
+                    android:padding="12dp"
                     android:hint="Title"
                     android:textSize="18sp"
                     android:textStyle="bold" />
@@ -63,13 +66,38 @@
                 <EditText
                     android:id="@+id/etContent"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="200dp"
                     android:layout_marginTop="16dp"
-                    android:background="@android:color/transparent"
+                    android:background="@drawable/bg_input_field"
+                    android:padding="12dp"
                     android:gravity="top"
                     android:hint="Write your thoughts here..."
                     android:minLines="8"
                     android:textSize="16sp" />
+
+                <HorizontalScrollView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp">
+
+                    <LinearLayout
+                        android:id="@+id/llSelectedImages"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal" />
+                </HorizontalScrollView>
+
+                <HorizontalScrollView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="0dp">
+
+                    <LinearLayout
+                        android:id="@+id/llSelectedVideos"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal" />
+                </HorizontalScrollView>
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -82,70 +110,70 @@
                         style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
                         android:layout_marginEnd="8dp"
+                        android:layout_weight="1"
+                        android:ellipsize="end"
+                        android:maxLines="1"
+                        android:paddingStart="10dp"
+                        android:paddingEnd="4dp"
                         android:text="Add Photo"
-                        app:icon="@android:drawable/ic_menu_camera" />
+                        app:icon="@android:drawable/ic_menu_camera"
+                        app:iconPadding="0dp" />
 
                     <Button
                         android:id="@+id/btnAddVideo"
                         style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
                         android:layout_marginStart="8dp"
+                        android:layout_weight="1"
+                        android:ellipsize="end"
+                        android:maxLines="1"
+                        android:paddingStart="10dp"
+                        android:paddingEnd="0dp"
                         android:text="Add Video"
-                        app:icon="@android:drawable/ic_media_play" />
+                        app:icon="@android:drawable/presence_video_away"
+                        app:iconPadding="0dp" />
                 </LinearLayout>
-                
-                <ImageView
-                    android:id="@+id/ivSelectedImage"
-                    android:layout_width="match_parent"
-                    android:layout_height="200dp"
-                    android:layout_marginTop="8dp"
-                    android:scaleType="centerCrop"
-                    android:visibility="gone"/>
 
                 <Button
                     android:id="@+id/btnAnalyze"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
+                    android:layout_marginTop="10dp"
                     android:text="Analyze with AI"
-                    app:icon="@drawable/ic_launcher_foreground"
-                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                     android:textColor="@color/purple_500"
-                    app:strokeColor="@color/purple_500" />
+                    android:textSize="16sp"
+                    android:padding="12dp"
+                    app:strokeColor="@color/purple_500"
+                    app:strokeWidth="1dp"
+                    app:icon="@drawable/analysis"
+                    app:iconTint="@null"
+                    app:iconSize="24dp"
+                    app:iconGravity="textStart" />
 
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
-        <com.google.android.material.card.MaterialCardView
+        <LinearLayout
             android:id="@+id/cvAiSuggestion"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            app:cardCornerRadius="12dp"
-            app:cardBackgroundColor="#E3F2FD"
-            app:strokeColor="#2196F3"
-            app:strokeWidth="1dp"
+            android:background="@drawable/bg_ai_result"
+            android:orientation="vertical"
+            android:padding="16dp"
             android:visibility="gone">
 
-            <LinearLayout
+            <TextView
+                android:id="@+id/tvAiSuggestion"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="16dp">
-
-                <TextView
-                    android:id="@+id/tvAiSuggestion"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="AI suggestion..."
-                    android:textColor="@android:color/black"
-                    android:textSize="16sp" />
-            </LinearLayout>
-        </com.google.android.material.card.MaterialCardView>
+                android:text="AI suggestion..."
+                android:textColor="@android:color/black"
+                android:textSize="16sp" />
+        </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -172,6 +200,31 @@
                 android:backgroundTint="@color/purple_500"
                 android:text="Save"
                 android:textColor="@android:color/white" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/llProgress"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginTop="16dp"
+            android:visibility="gone"
+            android:gravity="center">
+
+            <ProgressBar
+                android:id="@+id/progressBar"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:indeterminate="false"
+                android:max="100" />
+
+            <TextView
+                android:id="@+id/tvProgressStatus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Uploading..."
+                android:layout_marginTop="4dp"/>
         </LinearLayout>
 
     </LinearLayout>

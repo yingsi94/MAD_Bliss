@@ -27,6 +27,7 @@
         </activity>
         <activity android:name=".AddJournalActivity" />
         <activity android:name=".JournalDetailActivity" />
+        <activity android:name=".FullScreenImageActivity" />
     </application>
 
 </manifest>

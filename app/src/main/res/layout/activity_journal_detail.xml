@@ -4,181 +4,256 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F5F5F5"
+    android:background="@drawable/gradient_bg"
+    android:fitsSystemWindows="true"
     tools:context=".JournalDetailActivity">
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
         android:padding="16dp">
 
-        <LinearLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/headerLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:gravity="center_vertical">
+            android:gravity="center_vertical"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
 
             <ImageButton
                 android:id="@+id/btnBack"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="?attr/selectableItemBackgroundBorderless"
-                android:src="@drawable/ic_launcher_foreground"
+                android:src="@android:drawable/ic_menu_revert"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
                 app:tint="@android:color/black" />
 
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
                 android:layout_marginStart="16dp"
                 android:text="Back"
+                android:textColor="@android:color/black"
                 android:textSize="20sp"
                 android:textStyle="bold"
-                android:textColor="@android:color/black" />
+                app:layout_constraintEnd_toStartOf="@id/btnEdit"
+                app:layout_constraintStart_toEndOf="@id/btnBack"
+                app:layout_constraintTop_toTopOf="parent" />
 
             <ImageButton
                 android:id="@+id/btnEdit"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:src="@android:drawable/ic_menu_edit"
+                app:layout_constraintEnd_toStartOf="@id/btnDelete"
+                app:layout_constraintTop_toTopOf="parent"
                 app:tint="@android:color/black" />
 
             <ImageButton
                 android:id="@+id/btnDelete"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:src="@android:drawable/ic_menu_delete"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
                 app:tint="@android:color/holo_red_dark" />
-        </LinearLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
+            app:cardBackgroundColor="@color/white"
             app:cardCornerRadius="12dp"
-            app:cardElevation="4dp">
+            app:cardElevation="4dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/headerLayout">
 
-            <LinearLayout
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
                 android:padding="16dp">
 
-                <LinearLayout
-                    android:layout_width="match_parent"
+                <ImageView
+                    android:id="@+id/ivCalendar"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@android:drawable/ic_menu_my_calendar"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:tint="@android:color/darker_gray" />
+
+                <TextView
+                    android:id="@+id/tvDate"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical">
-
-                    <ImageView
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:src="@android:drawable/ic_menu_my_calendar"
-                        app:tint="@android:color/darker_gray" />
-
-                    <TextView
-                        android:id="@+id/tvDate"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="8dp"
-                        android:text="Nov 12, 2025 at 8:00 AM"
-                        android:textSize="12sp"
-                        android:textColor="@android:color/darker_gray" />
-                </LinearLayout>
+                    android:layout_marginStart="8dp"
+                    android:text="Nov 12, 2025 at 8:00 AM"
+                    android:textColor="@android:color/darker_gray"
+                    android:textSize="12sp"
+                    app:layout_constraintBottom_toBottomOf="@id/ivCalendar"
+                    app:layout_constraintStart_toEndOf="@id/ivCalendar"
+                    app:layout_constraintTop_toTopOf="@id/ivCalendar" />
 
                 <TextView
                     android:id="@+id/tvTitle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
+                    android:layout_marginTop="12dp"
                     android:text="Feeling overwhelmed"
+                    android:textColor="@android:color/black"
                     android:textSize="20sp"
                     android:textStyle="bold"
-                    android:textColor="@android:color/black" />
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/ivCalendar" />
 
                 <TextView
                     android:id="@+id/tvContent"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
+                    android:lineSpacingExtra="4dp"
                     android:text="Too many deadlines coming up..."
+                    android:textColor="@android:color/black"
                     android:textSize="16sp"
-                    android:lineSpacingExtra="4dp" />
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/tvTitle" />
 
-                <ImageView
-                    android:id="@+id/ivJournalImage"
+                <HorizontalScrollView
+                    android:id="@+id/hsvImages"
                     android:layout_width="match_parent"
-                    android:layout_height="200dp"
+                    android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
-                    android:scaleType="centerCrop"
-                    android:visibility="gone" />
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/tvContent">
+
+                    <LinearLayout
+                        android:id="@+id/llJournalImages"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal" />
+                </HorizontalScrollView>
+
+                <HorizontalScrollView
+                    android:id="@+id/hsvVideos"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/hsvImages">
+
+                    <LinearLayout
+                        android:id="@+id/llJournalVideos"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal" />
+                </HorizontalScrollView>
 
                 <View
+                    android:id="@+id/divider"
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
-                    android:layout_marginTop="16dp"
-                    android:background="#E0E0E0" />
+                    android:layout_marginTop="24dp"
+                    android:background="#E0E0E0"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/hsvVideos" />
 
+                <ImageView
+                    android:id="@+id/ivAiIcon"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_marginTop="16dp"
+                    android:src="@drawable/analysis"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/divider" />
                 <TextView
+                    android:id="@+id/tvAnalyze"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
+                    android:layout_marginStart="8dp"
                     android:text="Analyze with AI"
                     android:textColor="@color/purple_500"
+                    android:textSize="16sp"
                     android:textStyle="bold"
-                    android:drawableStart="@drawable/ic_launcher_foreground"
-                    android:drawablePadding="8dp"
-                    android:drawableTint="@color/purple_500" />
+                    app:layout_constraintBottom_toBottomOf="@id/ivAiIcon"
+                    app:layout_constraintStart_toEndOf="@id/ivAiIcon"
+                    app:layout_constraintTop_toTopOf="@id/ivAiIcon" />
 
                 <TextView
+                    android:id="@+id/tvDetectedMood"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
+                    android:layout_marginTop="16dp"
                     android:text="Detected Mood"
-                    android:textSize="14sp" />
+                    android:textColor="@android:color/black"
+                    android:textSize="16sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/tvAnalyze" />
 
                 <TextView
                     android:id="@+id/tvMood"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
+                    android:layout_marginTop="8dp"
                     android:background="@drawable/bg_search_bar"
-                    android:paddingHorizontal="12dp"
-                    android:paddingVertical="4dp"
+                    android:paddingHorizontal="16dp"
+                    android:paddingVertical="8dp"
                     android:text="Negative"
-                    android:textColor="@android:color/black" />
+                    android:textColor="@android:color/black"
+                    android:textSize="16sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/tvDetectedMood" />
 
                 <TextView
+                    android:id="@+id/tvSuggestedActivity"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
                     android:text="Suggested Activity"
-                    android:textSize="14sp" />
+                    android:textColor="@android:color/black"
+                    android:textSize="16sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/tvMood" />
 
                 <com.google.android.material.card.MaterialCardView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
+                    android:layout_marginTop="8dp"
+                    app:cardBackgroundColor="#F3E5F5"
                     app:cardCornerRadius="8dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/tvSuggestedActivity"
                     app:strokeColor="@color/purple_200"
-                    app:strokeWidth="1dp"
-                    app:cardBackgroundColor="#F3E5F5">
+                    app:strokeWidth="1dp">
 
                     <TextView
                         android:id="@+id/tvSuggestion"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:padding="12dp"
+                        android:padding="16dp"
                         android:text="AI suggestion..."
-                        android:textColor="@android:color/black" />
+                        android:textColor="@android:color/black"
+                        android:textSize="16sp" />
                 </com.google.android.material.card.MaterialCardView>
 
-            </LinearLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
         </com.google.android.material.card.MaterialCardView>
 
-    </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>
