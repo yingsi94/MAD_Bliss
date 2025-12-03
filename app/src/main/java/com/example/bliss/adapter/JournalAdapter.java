@@ -1,6 +1,7 @@
 package com.example.bliss.adapter;
 
 import android.content.Context;
+import android.content.res.ColorStateList;
 import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.example.bliss.R;
@@ -45,6 +47,22 @@ public class JournalAdapter extends RecyclerView.Adapter<JournalAdapter.JournalV
             return R.drawable.anxious;
         } else {
             return R.drawable.neutral;
+        }
+    }
+
+    private int getMoodColor(String mood) {
+        if (mood == null) return ContextCompat.getColor(context, R.color.mood_neutral);
+        String lowerMood = mood.toLowerCase();
+        if (lowerMood.contains("happy")) {
+            return ContextCompat.getColor(context, R.color.mood_happy);
+        } else if (lowerMood.contains("sad")) {
+            return ContextCompat.getColor(context, R.color.mood_sad);
+        } else if (lowerMood.contains("angry")) {
+            return ContextCompat.getColor(context, R.color.mood_angry);
+        } else if (lowerMood.contains("anxious")) {
+            return ContextCompat.getColor(context, R.color.mood_anxious);
+        } else {
+            return ContextCompat.getColor(context, R.color.mood_neutral);
         }
     }
 
@@ -185,9 +203,11 @@ public class JournalAdapter extends RecyclerView.Adapter<JournalAdapter.JournalV
                 }
             }
 
-            // Set mood icon based on detected mood
+            // Set mood icon and color based on detected mood
             int moodIconRes = getMoodIconResource(entry.getMood());
             ivMoodIcon.setImageResource(moodIconRes);
+            ivMoodIcon.setBackgroundTintList(ColorStateList.valueOf(getMoodColor(entry.getMood())));
+            ivMoodIcon.clearColorFilter(); // Ensure emoji itself isn't tinted
 
             itemView.setOnClickListener(v -> listener.onItemClick(entry));
         }

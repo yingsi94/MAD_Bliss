@@ -23,10 +23,13 @@ import java.util.List;
 public class JournalListActivity extends AppCompatActivity {
 
     private RecyclerView rvJournalList;
+    private android.widget.EditText etSearch;
     private JournalAdapter adapter;
     private List<JournalEntry> journalList;
+    private List<JournalEntry> allJournalList;
     private FirebaseFirestore db;
     private FloatingActionButton fabAddJournal;
+    private android.widget.ImageButton btnCalendar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,9 +37,13 @@ public class JournalListActivity extends AppCompatActivity {
         setContentView(R.layout.activity_journal_list);
 
         rvJournalList = findViewById(R.id.rvJournalList);
+        etSearch = findViewById(R.id.etSearch);
         fabAddJournal = findViewById(R.id.fabAddJournal);
+        btnCalendar = findViewById(R.id.btnCalendar);
         
         journalList = new ArrayList<>();
+        allJournalList = new ArrayList<>();
+        
         adapter = new JournalAdapter(this, journalList, entry -> {
             Intent intent = new Intent(JournalListActivity.this, JournalDetailActivity.class);
             intent.putExtra("journal_entry", entry);
@@ -52,8 +59,49 @@ public class JournalListActivity extends AppCompatActivity {
             Intent intent = new Intent(JournalListActivity.this, AddJournalActivity.class);
             startActivity(intent);
         });
+        
+        btnCalendar.setOnClickListener(v -> {
+            Intent intent = new Intent(JournalListActivity.this, CalendarActivity.class);
+            startActivity(intent);
+        });
+        
+        setupSearch();
 
         listenForUpdates();
+    }
+
+    private void setupSearch() {
+        etSearch.addTextChangedListener(new android.text.TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                filterJournals(s.toString());
+            }
+
+            @Override
+            public void afterTextChanged(android.text.Editable s) {}
+        });
+    }
+
+    private void filterJournals(String query) {
+        journalList.clear();
+        if (query.isEmpty()) {
+            journalList.addAll(allJournalList);
+        } else {
+            String lowerCaseQuery = query.toLowerCase();
+            for (JournalEntry entry : allJournalList) {
+                boolean matchesTitle = entry.getTitle() != null && entry.getTitle().toLowerCase().contains(lowerCaseQuery);
+                boolean matchesContent = entry.getContent() != null && entry.getContent().toLowerCase().contains(lowerCaseQuery);
+                boolean matchesMood = entry.getMood() != null && entry.getMood().toLowerCase().contains(lowerCaseQuery);
+                
+                if (matchesTitle || matchesContent || matchesMood) {
+                    journalList.add(entry);
+                }
+            }
+        }
+        adapter.notifyDataSetChanged();
     }
 
     private void listenForUpdates() {
@@ -69,15 +117,18 @@ public class JournalListActivity extends AppCompatActivity {
                         
                         Log.d("JournalListActivity", "Connected to Firestore! Document count: " + (value != null ? value.size() : 0));
 
-                        journalList.clear();
+                        allJournalList.clear();
                         for (DocumentSnapshot doc : value) {
                             JournalEntry entry = doc.toObject(JournalEntry.class);
                             if (entry != null) {
                                 entry.setId(doc.getId());
-                                journalList.add(entry);
+                                allJournalList.add(entry);
                             }
                         }
-                        adapter.notifyDataSetChanged();
+                        
+                        // Re-apply filter if search text exists
+                        String currentSearch = etSearch.getText().toString();
+                        filterJournals(currentSearch);
                     }
                 });
     }
