@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F5F5F5">
+
+    <!-- Main Content ScrollView -->
+    <ScrollView
+        android:id="@+id/scrollView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/bottomNavContainer"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="20dp">
+
+            <!-- Header Title -->
+            <TextView
+                android:id="@+id/tvTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Relaxation &amp; Goals"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                android:textColor="#000000"
+                android:layout_marginBottom="20dp" />
+
+            <!-- Tab Layout -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:background="@drawable/tab_background"
+                android:padding="4dp"
+                android:layout_marginBottom="20dp">
+
+                <Button
+                    android:id="@+id/btnMeditation"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Meditation"
+                    android:textColor="#000000"
+                    android:background="@drawable/tab_selected"
+                    android:textAllCaps="false"
+                    android:paddingVertical="8dp" />
+
+                <Button
+                    android:id="@+id/btnBreathing"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Breathing"
+                    android:textColor="#666666"
+                    android:background="@android:color/transparent"
+                    android:textAllCaps="false"
+                    android:paddingVertical="8dp" />
+
+                <Button
+                    android:id="@+id/btnGoals"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Goals"
+                    android:textColor="#666666"
+                    android:background="@android:color/transparent"
+                    android:textAllCaps="false"
+                    android:paddingVertical="8dp" />
+            </LinearLayout>
+
+            <!-- Subtitle -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Choose a meditation practice"
+                android:textSize="16sp"
+                android:textColor="#666666"
+                android:layout_marginBottom="16dp" />
+
+            <!-- Meditation Cards RecyclerView -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvMeditations"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:nestedScrollingEnabled="false" />
+
+        </LinearLayout>
+    </ScrollView>
+
+    <!-- Bottom Navigation -->
+    <FrameLayout
+        android:id="@+id/bottomNavContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true">
+
+        <!-- Bottom Navigation View -->
+        <com.google.android.material.bottomnavigation.BottomNavigationView
+            android:id="@+id/bottomNavigation"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#FFFFFF"
+            android:elevation="8dp"
+            app:itemIconTint="@color/bottom_nav_color"
+            app:itemTextColor="@color/bottom_nav_color"
+            app:labelVisibilityMode="labeled"
+            app:menu="@menu/bottom_nav_menu" />
+
+        <!-- Floating Center Button -->
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fabRelax"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal|top"
+            android:layout_marginTop="-28dp"
+            android:src="@drawable/ic_chat"
+            app:fabSize="normal"
+            app:tint="#FFFFFF"
+            app:background="@drawable/fab_gradient"
+            android:elevation="6dp"
+            android:contentDescription="Relax" />
+
+    </FrameLayout>
+
+</RelativeLayout>
