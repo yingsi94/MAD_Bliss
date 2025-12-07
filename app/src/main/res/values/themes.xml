@@ -6,4 +6,9 @@
     </style>
 
     <style name="Theme.Bliss" parent="Base.Theme.Bliss" />
+
+    <style name="ShapeAppearanceOverlay.App.FAB" parent="ShapeAppearance.MaterialComponents.MediumComponent">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">50%</item>
+    </style>
 </resources>

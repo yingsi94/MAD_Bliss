@@ -1,31 +1,26 @@
 package com.example.bliss;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
-import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-
 import java.util.ArrayList;
 import java.util.List;
 
 public class RelaxationActivity extends AppCompatActivity {
-
     private RecyclerView rvMeditations;
     private MeditationAdapter adapter;
     private List<MeditationItem> meditationList;
-    private FloatingActionButton fabRelax;
-    private BottomNavigationView bottomNav;
+    private Button btnMeditation, btnBreathing, btnGoals;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,44 +31,35 @@ public class RelaxationActivity extends AppCompatActivity {
         rvMeditations = findViewById(R.id.rvMeditations);
         rvMeditations.setLayoutManager(new LinearLayoutManager(this));
 
+        //Initialize tab buttons
+        btnMeditation = findViewById(R.id.btnMeditation);
+        btnBreathing = findViewById(R.id.btnBreathing);
+        btnGoals = findViewById(R.id.btnGoals);
+
         // Create meditation items
         meditationList = new ArrayList<>();
         meditationList.add(new MeditationItem("Body Scan", "Progressive relaxation", "10 min"));
-        meditationList.add(new MeditationItem("Body Scan", "Progressive relaxation", "10 min"));
-        meditationList.add(new MeditationItem("Body Scan", "Progressive relaxation", "10 min"));
-        meditationList.add(new MeditationItem("Body Scan", "Progressive relaxation", "10 min"));
+        meditationList.add(new MeditationItem("Mindful Breathing", "Focus on breath", "15 min"));
+        meditationList.add(new MeditationItem("Sleep Meditation", "Deep relaxation", "20 min"));
+        meditationList.add(new MeditationItem("Stress Relief", "Release tension", "12 min"));
 
         // Set adapter
         adapter = new MeditationAdapter(meditationList);
         rvMeditations.setAdapter(adapter);
 
-        // Setup Bottom Navigation
-        bottomNav = findViewById(R.id.bottomNavigation);
-
-        // Setup Floating Action Button
-        fabRelax = findViewById(R.id.fabRelax);
-        fabRelax.setOnClickListener(v -> {
-            Toast.makeText(this, "Relax clicked", Toast.LENGTH_SHORT).show();
-            // You're already on Relax page, so just show a message
+        btnMeditation.setOnClickListener(v -> {
+            // Already on Meditation tab
         });
 
-        // Bottom Navigation Click Listeners
-        bottomNav.setOnItemSelectedListener(item -> {
-            int itemId = item.getItemId();
-            if (itemId == R.id.nav_home) {
-                Toast.makeText(this, "Home clicked", Toast.LENGTH_SHORT).show();
-                return true;
-            } else if (itemId == R.id.nav_journal) {
-                Toast.makeText(this, "Journal clicked", Toast.LENGTH_SHORT).show();
-                return true;
-            } else if (itemId == R.id.nav_relax) {
-                // Do nothing, handled by FAB
-                return false;
-            } else if (itemId == R.id.nav_profile) {
-                Toast.makeText(this, "Profile clicked", Toast.LENGTH_SHORT).show();
-                return true;
-            }
-            return false;
+        btnBreathing.setOnClickListener(v -> {
+            // Navigate to Breathing Activity
+            Intent intent = new Intent(RelaxationActivity.this, BreathingActivity.class);
+            startActivity(intent);
+        });
+
+        btnGoals.setOnClickListener(v -> {
+            Intent intent = new Intent(RelaxationActivity.this, GoalsActivity.class);
+            startActivity(intent);
         });
     }
 
@@ -89,14 +75,21 @@ public class RelaxationActivity extends AppCompatActivity {
             this.duration = duration;
         }
 
-        public String getTitle() { return title; }
-        public String getSubtitle() { return subtitle; }
-        public String getDuration() { return duration; }
+        public String getTitle() {
+            return title;
+        }
+
+        public String getSubtitle() {
+            return subtitle;
+        }
+
+        public String getDuration() {
+            return duration;
+        }
     }
 
     // RecyclerView Adapter
     public class MeditationAdapter extends RecyclerView.Adapter<MeditationAdapter.ViewHolder> {
-
         private List<MeditationItem> items;
 
         public MeditationAdapter(List<MeditationItem> items) {
@@ -118,11 +111,23 @@ public class RelaxationActivity extends AppCompatActivity {
             holder.tvSubtitle.setText(item.getSubtitle());
             holder.tvDuration.setText(item.getDuration());
 
-            holder.itemView.setOnClickListener(v ->
-                    Toast.makeText(RelaxationActivity.this,
-                            "Playing: " + item.getTitle(),
-                            Toast.LENGTH_SHORT).show()
-            );
+            // Click listener to open player activity
+            holder.itemView.setOnClickListener(v -> {
+                Intent intent = new Intent(RelaxationActivity.this, MeditationPlayerActivity.class);
+                intent.putExtra("title", item.getTitle());
+                intent.putExtra("subtitle", item.getSubtitle());
+                intent.putExtra("duration", item.getDuration());
+                startActivity(intent);
+            });
+
+            // Play button click listener
+            holder.ivPlayButton.setOnClickListener(v -> {
+                Intent intent = new Intent(RelaxationActivity.this, MeditationPlayerActivity.class);
+                intent.putExtra("title", item.getTitle());
+                intent.putExtra("subtitle", item.getSubtitle());
+                intent.putExtra("duration", item.getDuration());
+                startActivity(intent);
+            });
         }
 
         @Override
