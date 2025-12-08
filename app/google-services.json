@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "124754765244",
+    "project_id": "bliss-88755",
+    "storage_bucket": "bliss-88755.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:124754765244:android:6b40337a12ee83f4d477b9",
+        "android_client_info": {
+          "package_name": "com.example.bliss"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAq55CTqst0tj-POTPQSOKT_2z4R2TDYNM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
