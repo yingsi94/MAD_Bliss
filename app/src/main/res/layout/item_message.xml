@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="8dp">
+
+    <TextView
+        android:id="@+id/text_gchat_user"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Me"
+        android:textStyle="bold"
+        android:layout_gravity="end"
+        android:textSize="12sp" />
+
+    <TextView
+        android:id="@+id/text_gchat_message"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Hello world!"
+        android:background="@drawable/chat_bubble_bg"
+        android:padding="10dp"
+        android:layout_marginTop="4dp"
+        android:layout_gravity="end"
+        android:textSize="16sp"
+        android:maxWidth="260dp" />
+
+    <TextView
+        android:id="@+id/text_gchat_timestamp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="10:00 AM"
+        android:layout_gravity="end"
+        android:textSize="10sp"
+        android:textColor="#808080"/>
+
+</LinearLayout>
