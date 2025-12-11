@@ -50,6 +50,13 @@ dependencies {
     implementation(libs.ui.graphics)
     implementation(libs.ui.tooling.preview)
     implementation(libs.material3)
+    implementation(libs.firebase.auth)
+    implementation(libs.firebase.firestore)
+    implementation(platform(libs.firebase.bom))
+    implementation("com.google.firebase:firebase-bom:33.1.0")
+    implementation("com.google.firebase:firebase-firestore-ktx")
+    implementation("com.google.firebase:firebase-storage")
+    implementation(libs.firebase.storage)
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
@@ -57,4 +64,12 @@ dependencies {
     androidTestImplementation(libs.ui.test.junit4)
     debugImplementation(libs.ui.tooling)
     debugImplementation(libs.ui.test.manifest)
+
+    //picasso lib
+    implementation("com.squareup.picasso:picasso:2.8")
+
+    //cloudinary sdk
+    implementation("com.cloudinary:cloudinary-android:3.1.2")
+
+
 }

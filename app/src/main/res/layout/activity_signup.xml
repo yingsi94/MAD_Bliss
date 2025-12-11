@@ -9,8 +9,8 @@
     android:background="#FFFFFF">
 
     <ImageView
-        android:layout_width="335dp"
-        android:layout_height="327dp"
+        android:layout_width="333dp"
+        android:layout_height="315dp"
         android:layout_marginBottom="16dp"
         android:src="@drawable/bliss_logo"
         tools:srcCompat="@drawable/bliss_logo" />
@@ -51,6 +51,19 @@
             android:layout_height="wrap_content"
             android:hint="Password"
             android:inputType="textPassword"/>
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="24dp">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/etPhone"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Phone Number"
+            android:inputType="textPassword" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <Button
