@@ -10,39 +10,41 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:padding="24dp"
-        android:focusableInTouchMode="true"
-        android:descendantFocusability="blocksDescendants">
-
-        <ImageButton
-            android:id="@+id/btnBackEdit"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_marginBottom="16dp"
-            android:clickable="true"
-            android:focusable="true"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:scaleType="fitCenter"
-            android:src="@drawable/left_arrow_3849790"
-            tools:srcCompat="@drawable/left_arrow_3849790" />
+        android:focusableInTouchMode="true">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Edit Profile"
-            android:textSize="24sp"
-            android:textStyle="bold"
-            android:textColor="#333333"
             android:layout_gravity="center"
-            android:layout_marginBottom="32dp"/>
+            android:layout_marginTop="32dp"
+            android:layout_marginBottom="32dp"
+            android:text="Edit Profile"
+            android:textColor="#333333"
+            android:textSize="26sp"
+            android:textStyle="bold" />
 
         <ImageView
             android:id="@+id/ivEditProfilePicture"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
+            android:layout_width="196dp"
+            android:layout_height="226dp"
             android:layout_gravity="center"
-            android:layout_marginBottom="32dp"
-            android:src="@drawable/_858504"
-            tools:srcCompat="@drawable/_858504" />
+            android:layout_marginBottom="5dp"
+            android:src="@mipmap/ic_launcher" />
+
+        <Button
+            android:id="@+id/btnChangePhoto"
+            android:layout_width="wrap_content"
+            android:layout_height="36dp"
+            android:layout_gravity="center"
+            android:layout_marginBottom="16dp"
+            android:backgroundTint="#F5F5F5"
+            android:elevation="2dp"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:text="Change Photo"
+            android:textColor="#9C27B0"
+            android:textSize="14sp" />
+
 
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
@@ -50,24 +52,11 @@
             android:layout_marginBottom="16dp">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/etFirstName"
+                android:id="@+id/etFullName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="First Name"
-                android:text="Alex"/>
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/etLastName"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Last Name"
-                android:text="Barcelona"/>
+                android:hint="Full Name"
+                android:inputType="textPersonName" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
@@ -80,7 +69,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Email"
-                android:text="alexbarcelona@gmail.com"
                 android:inputType="textEmailAddress"/>
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -94,8 +82,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Mobile Number"
-                android:inputType="phone"
-                android:text="+60 12345678" />
+                android:inputType="phone" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <LinearLayout
@@ -108,11 +95,11 @@
                 android:id="@+id/btnCancel"
                 android:layout_width="0dp"
                 android:layout_height="56dp"
+                android:layout_marginEnd="8dp"
                 android:layout_weight="1"
-                android:text="Cancel"
-                android:textColor="#9C27B0"
                 android:backgroundTint="#F5F5F5"
-                android:layout_marginEnd="8dp"/>
+                android:text="Cancel"
+                android:textColor="#9C27B0" />
 
             <Button
                 android:id="@+id/btnSave"

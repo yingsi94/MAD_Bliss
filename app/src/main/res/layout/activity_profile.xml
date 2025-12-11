@@ -23,12 +23,11 @@
 
         <ImageView
             android:id="@+id/ivProfilePicture"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
+            android:layout_width="152dp"
+            android:layout_height="156dp"
             android:layout_gravity="center"
             android:layout_marginBottom="8dp"
-            android:src="@drawable/_858504"
-            tools:srcCompat="@drawable/_858504" />
+            android:src="@mipmap/ic_launcher" />
 
         <TextView
             android:id="@+id/tvUserName"
@@ -36,7 +35,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginBottom="4dp"
-            android:text="Alex Barcelona"
+            android:text="Name"
             android:textColor="#333333"
             android:textSize="20sp"
             android:textStyle="bold" />
@@ -47,9 +46,15 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginBottom="8dp"
-            android:text="alexbarcelona@gmail.com"
+            android:text="Email"
             android:textColor="#666666"
             android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/tvUserPhone"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:visibility="gone" />
 
         <Button
             android:id="@+id/btnEditProfile"
@@ -191,10 +196,10 @@
 
         <TextView
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="48dp"
             android:layout_gravity="center"
-            android:layout_marginTop="24dp"
-            android:layout_marginBottom="8dp"
+            android:layout_marginTop="30dp"
+            android:layout_marginBottom="0dp"
             android:gravity="center"
             android:text="If you have any other query\nYou can reach out to us"
             android:textColor="#666666"
@@ -205,7 +210,7 @@
             android:layout_width="wrap_content"
             android:layout_height="16dp"
             android:layout_gravity="center"
-            android:text="WhatsApp Us"
+            android:text="madblissss05@gmail.com"
             android:textColor="#9C27B0"
             android:textSize="14sp" />
 
