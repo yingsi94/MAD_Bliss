@@ -1,43 +1,36 @@
-# ===============================================
-# Android Studio / Gradle / Firebase
-# ===============================================
+    # ===============================================
+    # A clean and correct .gitignore for Android
+    # ===============================================
 
-# Built application files
-/build
-/app/build
+    # Built application files
+    /build
+    /app/build
 
-# Local configuration file (contains SDK path, etc.)
-/local.properties
+    # Local configuration file (contains SDK path, etc.)
+    # This file should be unique to each machine.
+    /local.properties
 
-# Log files
-*.log
+    # Log files
+    *.log
 
-# Android Studio files
-/.idea
-/.idea/caches
-/.idea/libraries
-/.idea/modules.xml
-/.idea/workspace.xml
-/.idea/navEditor.xml
-/.idea/assetWizardSettings.xml
+    # Android Studio/IntelliJ files
+    # The .idea directory contains local workspace settings.
+    /.idea
 
-# Gradle files
-.gradle/
-!/gradle/wrapper/gradle-wrapper.jar
-!/gradle-wrapper.properties
-!/gradlew
-!/gradlew.bat
+    # Gradle files
+    .gradle/
+    !/gradle/wrapper/gradle-wrapper.jar
+    !/gradle-wrapper.properties
+    !/gradlew
+    !/gradlew.bat
 
-# Keystore files (never commit your signing keys)
-*.jks
-*.keystore
+    # Keystore files (NEVER commit your signing keys)
+    *.jks
+    *.keystore
 
-# Firebase / Google Services
-# Leave this commented if you want to commit google-services.json
-# google-services.json
-
-# Other generated files
-.DS_Store
-/captures
-.externalNativeBuild
-.cxx
+    # Other generated files
+    .DS_Store
+    /captures
+    .externalNativeBuild
+    .cxx
+    
