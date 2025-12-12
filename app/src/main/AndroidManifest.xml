@@ -2,7 +2,12 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <uses-permission android:name="android.permission.INTERNET" />
+    <!--STORAGE-->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+
+    <!--INTERNET ACCESS-->
+    <uses-permission android:name="android.permission.INTERNET"/>
+
 
     <application
         android:allowBackup="true"
@@ -13,18 +18,29 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Bliss">
+        <activity android:name=".ChangePasswordActivity"/>
+        <activity android:name=".EditProfileActivity" />
+        <activity android:name=".ForgotPasswordActivity"/>
+        <activity android:name=".SignUpActivity"/>
+        <activity android:name=".ProfileActivity"/>
         <activity
-            android:name=".MainActivity"
+            android:name=".LoginActivity"
             android:exported="false" />
         <activity
             android:name=".JournalListActivity"
-            android:exported="true">
+            android:exported="true"
+            android:launchMode="singleTask">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <meta-data
+            android:name="CLOUDINARY_URL"
+            android:value="cloudinary://847458557797165:VoH55kkWxVHl7D4FjqPhP6AQHVo@ddzraiu5y"/>
+
         <activity android:name=".AddJournalActivity" />
         <activity android:name=".JournalDetailActivity" />
         <activity android:name=".CalendarActivity" />
