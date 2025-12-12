@@ -14,8 +14,11 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import com.example.bliss.adapter.JournalAdapter;
 import com.example.bliss.model.JournalEntry;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -38,7 +41,7 @@ public class CalendarActivity extends AppCompatActivity {
     private RecyclerView rvCalendar;
     private ImageButton btnPrevMonth, btnNextMonth, btnBack;
     private Calendar currentMonth;
-    private CalendarAdapter adapter;
+    private CalendarAdapter calendarAdapter;
     private FirebaseFirestore db;
     private Map<String, List<JournalEntry>> journalMap = new HashMap<>(); // Key: "yyyy-MM-dd"
 
@@ -57,9 +60,10 @@ public class CalendarActivity extends AppCompatActivity {
         currentMonth = Calendar.getInstance();
         currentMonth.set(Calendar.DAY_OF_MONTH, 1); // Start at 1st of month
 
+        // Calendar Grid Setup
         rvCalendar.setLayoutManager(new GridLayoutManager(this, 7));
-        adapter = new CalendarAdapter();
-        rvCalendar.setAdapter(adapter);
+        calendarAdapter = new CalendarAdapter();
+        rvCalendar.setAdapter(calendarAdapter);
 
         btnPrevMonth.setOnClickListener(v -> {
             currentMonth.add(Calendar.MONTH, -1);
@@ -143,35 +147,42 @@ public class CalendarActivity extends AppCompatActivity {
             calendar.add(Calendar.DAY_OF_MONTH, 1);
         }
 
-        adapter.setDays(days);
+        calendarAdapter.setDays(days);
     }
 
-    private void showMultipleEntriesDialog(List<JournalEntry> entries) {
-        String[] items = new String[entries.size()];
-        SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm", Locale.getDefault());
-        
-        for (int i = 0; i < entries.size(); i++) {
-            JournalEntry entry = entries.get(i);
-            String title = entry.getTitle() != null && !entry.getTitle().isEmpty() ? entry.getTitle() : "Untitled";
-            String time = entry.getDate() != null ? timeFormat.format(entry.getDate().toDate()) : "";
-            items[i] = time + " - " + title;
+    private void showDayEntriesBottomSheet(Date date, List<JournalEntry> entries) {
+        if (entries == null || entries.isEmpty()) {
+            Toast.makeText(this, "No entries for this day", Toast.LENGTH_SHORT).show();
+            return;
         }
 
-        new AlertDialog.Builder(this)
-                .setTitle("Select Journal Entry")
-                .setItems(items, (dialog, which) -> {
-                    JournalEntry selectedEntry = entries.get(which);
-                    Intent intent = new Intent(CalendarActivity.this, JournalDetailActivity.class);
-                    intent.putExtra("journal_entry", selectedEntry);
-                    startActivity(intent);
-                })
-                .show();
+        BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(this, R.style.BottomSheetDialogTheme);
+        View sheetView = LayoutInflater.from(this).inflate(R.layout.layout_bottom_sheet_entries, null);
+        bottomSheetDialog.setContentView(sheetView);
+
+        TextView tvSheetDate = sheetView.findViewById(R.id.tvSelectedDate);
+        RecyclerView rvSheetEntries = sheetView.findViewById(R.id.rvDayEntries);
+
+        SimpleDateFormat sdf = new SimpleDateFormat("MMMM dd, yyyy", Locale.getDefault());
+        tvSheetDate.setText(sdf.format(date));
+
+        rvSheetEntries.setLayoutManager(new LinearLayoutManager(this));
+        JournalAdapter adapter = new JournalAdapter(this, entries, entry -> {
+            bottomSheetDialog.dismiss();
+            Intent intent = new Intent(CalendarActivity.this, JournalDetailActivity.class);
+            intent.putExtra("journal_entry", entry);
+            startActivity(intent);
+        });
+        rvSheetEntries.setAdapter(adapter);
+
+        bottomSheetDialog.show();
     }
 
     private class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.DayViewHolder> {
         private List<Date> days = new ArrayList<>();
         private SimpleDateFormat keyFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
         private SimpleDateFormat dayFormat = new SimpleDateFormat("d", Locale.getDefault());
+        private int selectedPosition = -1;
 
         public void setDays(List<Date> days) {
             this.days = days;
@@ -188,6 +199,10 @@ public class CalendarActivity extends AppCompatActivity {
         @Override
         public void onBindViewHolder(@NonNull DayViewHolder holder, int position) {
             Date date = days.get(position);
+            
+            // Reset background
+            holder.itemView.setBackgroundResource(selectedPosition == position ? R.drawable.circle_background_selected : 0);
+
             if (date == null) {
                 holder.tvDay.setText("");
                 holder.ivMoodEmoji.setVisibility(View.INVISIBLE);
@@ -203,20 +218,17 @@ public class CalendarActivity extends AppCompatActivity {
                     JournalEntry latestEntry = entries.get(entries.size() - 1);
                     holder.ivMoodEmoji.setVisibility(View.VISIBLE);
                     holder.ivMoodEmoji.setImageResource(getMoodIconResource(latestEntry.getMood()));
-                    
-                    holder.itemView.setOnClickListener(v -> {
-                        if (entries.size() == 1) {
-                            Intent intent = new Intent(CalendarActivity.this, JournalDetailActivity.class);
-                            intent.putExtra("journal_entry", latestEntry);
-                            startActivity(intent);
-                        } else {
-                            showMultipleEntriesDialog(entries);
-                        }
-                    });
                 } else {
                     holder.ivMoodEmoji.setVisibility(View.INVISIBLE);
-                    holder.itemView.setOnClickListener(null);
                 }
+                
+                holder.itemView.setOnClickListener(v -> {
+                    int previousSelected = selectedPosition;
+                    selectedPosition = holder.getAdapterPosition();
+                    notifyItemChanged(previousSelected);
+                    notifyItemChanged(selectedPosition);
+                    showDayEntriesBottomSheet(date, entries);
+                });
             }
         }
 

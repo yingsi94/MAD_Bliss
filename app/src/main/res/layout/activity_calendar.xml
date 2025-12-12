@@ -15,7 +15,7 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:gravity="center_vertical"
-        android:padding="16dp">
+        android:paddingHorizontal="16dp">
 
         <ImageButton
             android:id="@+id/btnBack"
@@ -24,7 +24,8 @@
             android:padding="12dp"
             android:scaleType="fitCenter"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:src="@drawable/arrow_13742267" />
+            android:src="@drawable/arrow_13742267"
+            android:rotation="180" />
 
         <TextView
             android:layout_width="0dp"
@@ -42,61 +43,77 @@
     </LinearLayout>
 
     <!-- Month Navigation -->
-    <LinearLayout
+    <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center"
-        android:padding="8dp">
+        android:layout_margin="16dp"
+        app:cardCornerRadius="16dp"
+        app:cardElevation="4dp"
+        app:cardBackgroundColor="@android:color/white">
 
-        <ImageButton
-            android:id="@+id/btnPrevMonth"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:src="@android:drawable/ic_media_previous"
-            app:tint="@android:color/black" />
-
-        <TextView
-            android:id="@+id/tvMonthYear"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="December 2025"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            android:textColor="@android:color/black"
-            android:layout_marginHorizontal="24dp" />
+            android:orientation="vertical"
+            android:padding="8dp">
 
-        <ImageButton
-            android:id="@+id/btnNextMonth"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:src="@android:drawable/ic_media_next"
-            app:tint="@android:color/black" />
-    </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:padding="8dp">
 
-    <!-- Days Header -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:paddingVertical="8dp">
-        
-        <TextView style="@style/CalendarDayHeader" android:text="Sun" />
-        <TextView style="@style/CalendarDayHeader" android:text="Mon" />
-        <TextView style="@style/CalendarDayHeader" android:text="Tue" />
-        <TextView style="@style/CalendarDayHeader" android:text="Wed" />
-        <TextView style="@style/CalendarDayHeader" android:text="Thu" />
-        <TextView style="@style/CalendarDayHeader" android:text="Fri" />
-        <TextView style="@style/CalendarDayHeader" android:text="Sat" />
-    </LinearLayout>
+                <ImageButton
+                    android:id="@+id/btnPrevMonth"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:background="@drawable/circle_background"
+                    android:src="@android:drawable/ic_media_previous"
+                    app:tint="@android:color/black" />
 
-    <!-- Calendar Grid -->
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rvCalendar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="8dp" />
+                <TextView
+                    android:id="@+id/tvMonthYear"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="December 2025"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:textColor="@android:color/black"
+                    android:layout_marginHorizontal="24dp" />
+
+                <ImageButton
+                    android:id="@+id/btnNextMonth"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:background="@drawable/circle_background"
+                    android:src="@android:drawable/ic_media_next"
+                    app:tint="@android:color/black" />
+            </LinearLayout>
+
+            <!-- Days Header -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingVertical="8dp">
+                
+                <TextView style="@style/CalendarDayHeader" android:text="Sun" />
+                <TextView style="@style/CalendarDayHeader" android:text="Mon" />
+                <TextView style="@style/CalendarDayHeader" android:text="Tue" />
+                <TextView style="@style/CalendarDayHeader" android:text="Wed" />
+                <TextView style="@style/CalendarDayHeader" android:text="Thu" />
+                <TextView style="@style/CalendarDayHeader" android:text="Fri" />
+                <TextView style="@style/CalendarDayHeader" android:text="Sat" />
+            </LinearLayout>
+
+            <!-- Calendar Grid -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvCalendar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="4dp" />
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
 
 </LinearLayout>

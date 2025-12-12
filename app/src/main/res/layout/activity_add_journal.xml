@@ -13,68 +13,93 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="16dp">
+        android:paddingHorizontal="16dp"
+        android:paddingBottom="16dp">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:gravity="center_vertical">
+            android:gravity="center_vertical"
+            android:layout_marginBottom="16dp">
 
             <ImageButton
                 android:id="@+id/btnBack"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
                 android:padding="12dp"
                 android:scaleType="fitCenter"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:src="@drawable/arrow_13742267" />
+                android:src="@drawable/arrow_13742267"
+                android:rotation="180"
+                android:elevation="2dp"/>
 
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:text="Back"
-                android:textSize="20sp"
+                android:layout_weight="1"
+                android:text="New Entry"
+                android:textSize="24sp"
                 android:textStyle="bold"
-                android:textColor="@android:color/black" />
+                android:textColor="@android:color/black"
+                android:gravity="center"
+                android:layout_marginEnd="48dp"/> <!-- Balance the back button -->
         </LinearLayout>
 
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            app:cardCornerRadius="12dp"
-            app:cardElevation="4dp"
+            app:cardCornerRadius="24dp"
+            app:cardElevation="0dp"
+            app:strokeWidth="1dp"
+            app:strokeColor="#E0E0E0"
             app:cardBackgroundColor="@android:color/white">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:padding="16dp">
+                android:padding="20dp">
 
-                <EditText
-                    android:id="@+id/etTitle"
+                <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/bg_input_field"
-                    android:padding="12dp"
                     android:hint="Title"
-                    android:textSize="18sp"
-                    android:textStyle="bold" />
+                    app:boxBackgroundMode="outline"
+                    app:boxCornerRadiusTopStart="12dp"
+                    app:boxCornerRadiusTopEnd="12dp"
+                    app:boxCornerRadiusBottomStart="12dp"
+                    app:boxCornerRadiusBottomEnd="12dp">
 
-                <EditText
-                    android:id="@+id/etContent"
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etTitle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:inputType="textCapSentences" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="match_parent"
-                    android:layout_height="200dp"
+                    android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
-                    android:background="@drawable/bg_input_field"
-                    android:padding="12dp"
-                    android:gravity="top"
                     android:hint="Write your thoughts here..."
-                    android:minLines="8"
-                    android:textSize="16sp" />
+                    app:boxBackgroundMode="outline"
+                    app:boxCornerRadiusTopStart="12dp"
+                    app:boxCornerRadiusTopEnd="12dp"
+                    app:boxCornerRadiusBottomStart="12dp"
+                    app:boxCornerRadiusBottomEnd="12dp">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etContent"
+                        android:layout_width="match_parent"
+                        android:layout_height="200dp"
+                        android:gravity="top"
+                        android:inputType="textMultiLine|textCapSentences"
+                        android:minLines="8"
+                        android:textSize="16sp" />
+                </com.google.android.material.textfield.TextInputLayout>
 
                 <HorizontalScrollView
                     android:layout_width="match_parent"
@@ -103,55 +128,51 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
+                    android:layout_marginTop="20dp"
                     android:orientation="horizontal">
 
-                    <Button
+                    <com.google.android.material.button.MaterialButton
                         android:id="@+id/btnAddPhoto"
                         style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="8dp"
                         android:layout_weight="1"
-                        android:ellipsize="end"
-                        android:maxLines="1"
-                        android:paddingStart="10dp"
-                        android:paddingEnd="4dp"
-                        android:text="Add Photo"
-                        app:icon="@android:drawable/ic_menu_camera"
-                        app:iconPadding="0dp" />
+                        android:text="Photo"
+                        android:textColor="@color/purple_500"
+                        app:cornerRadius="12dp"
+                        app:icon="@drawable/photo"
+                        app:strokeColor="@color/purple_500" />
 
-                    <Button
+                    <com.google.android.material.button.MaterialButton
                         android:id="@+id/btnAddVideo"
                         style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="8dp"
                         android:layout_weight="1"
-                        android:ellipsize="end"
-                        android:maxLines="1"
-                        android:paddingStart="10dp"
-                        android:paddingEnd="0dp"
-                        android:text="Add Video"
-                        app:icon="@android:drawable/presence_video_away"
-                        app:iconPadding="0dp" />
+                        android:text="Video"
+                        android:textColor="@color/purple_500"
+                        app:cornerRadius="12dp"
+                        app:icon="@drawable/video"
+                        app:strokeColor="@color/purple_500" />
                 </LinearLayout>
 
-                <Button
+                <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnAnalyze"
                     style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:text="Analyze with AI"
+                    android:layout_height="56dp"
+                    android:layout_marginTop="16dp"
+                    android:text="Analyze Mood with AI"
                     android:textColor="@color/purple_500"
                     android:textSize="16sp"
-                    android:padding="12dp"
+                    android:textStyle="bold"
+                    app:cornerRadius="16dp"
                     app:strokeColor="@color/purple_500"
                     app:strokeWidth="1dp"
                     app:icon="@drawable/analysis"
                     app:iconTint="@null"
-                    app:iconSize="24dp"
                     app:iconGravity="textStart" />
 
             </LinearLayout>
@@ -182,25 +203,30 @@
             android:layout_marginTop="24dp"
             android:orientation="horizontal">
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnCancel"
-                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="56dp"
                 android:layout_weight="1"
                 android:layout_marginEnd="8dp"
                 android:text="Cancel"
-                android:textColor="@android:color/black" />
+                android:textColor="#757575"
+                app:cornerRadius="28dp" />
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnSave"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="56dp"
                 android:layout_weight="1"
                 android:layout_marginStart="8dp"
                 android:backgroundTint="@color/purple_500"
-                android:text="Save"
-                android:textColor="@android:color/white" />
+                android:text="Save Entry"
+                android:textColor="@android:color/white"
+                app:cornerRadius="28dp"
+                android:textStyle="bold"
+                app:icon="@android:drawable/ic_menu_save"
+                app:iconTint="@android:color/white"/>
         </LinearLayout>
 
         <LinearLayout
