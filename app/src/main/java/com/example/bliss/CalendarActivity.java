@@ -16,6 +16,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.bliss.model.JournalEntry;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -23,6 +24,8 @@ import com.google.firebase.firestore.Query;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -74,24 +77,41 @@ public class CalendarActivity extends AppCompatActivity {
     }
 
     private void fetchJournals() {
+        String userId = FirebaseAuth.getInstance().getCurrentUser() != null ? FirebaseAuth.getInstance().getCurrentUser().getUid() : null;
+        
+        if (userId == null) {
+            return;
+        }
+
+        // Removed orderBy("date") to avoid requiring a composite index
         db.collection("journals")
-                .orderBy("date", Query.Direction.ASCENDING)
+                .whereEqualTo("userId", userId)
                 .get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
                     journalMap.clear();
                     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
                     
+                    List<JournalEntry> allEntries = new ArrayList<>();
                     for (DocumentSnapshot doc : queryDocumentSnapshots) {
                         JournalEntry entry = doc.toObject(JournalEntry.class);
                         if (entry != null && entry.getDate() != null) {
                             entry.setId(doc.getId());
-                            String dateKey = sdf.format(entry.getDate().toDate());
-                            
-                            if (!journalMap.containsKey(dateKey)) {
-                                journalMap.put(dateKey, new ArrayList<>());
-                            }
-                            journalMap.get(dateKey).add(entry);
+                            allEntries.add(entry);
                         }
+                    }
+
+                    // Sort by date ascending (oldest first)
+                    Collections.sort(allEntries, (e1, e2) -> {
+                        if (e1.getDate() == null || e2.getDate() == null) return 0;
+                        return e1.getDate().compareTo(e2.getDate());
+                    });
+
+                    for (JournalEntry entry : allEntries) {
+                        String dateKey = sdf.format(entry.getDate().toDate());
+                        if (!journalMap.containsKey(dateKey)) {
+                            journalMap.put(dateKey, new ArrayList<>());
+                        }
+                        journalMap.get(dateKey).add(entry);
                     }
                     updateCalendar();
                 })

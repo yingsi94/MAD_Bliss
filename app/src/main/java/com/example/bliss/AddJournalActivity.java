@@ -23,6 +23,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.bumptech.glide.Glide;
 import com.example.bliss.ai.GeminiHelper;
 import com.example.bliss.model.JournalEntry;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -319,9 +320,51 @@ public class AddJournalActivity extends AppCompatActivity {
         }
 
         btnSave.setEnabled(false);
-        Toast.makeText(this, "Uploading media...", Toast.LENGTH_SHORT).show();
-        
-        uploadMediaToCloudinary(title, content);
+
+        // Auto-analyze if mood is missing
+        if (currentMood == null || currentMood.isEmpty()) {
+            Toast.makeText(this, "Analyzing mood before saving...", Toast.LENGTH_SHORT).show();
+            
+            geminiHelper.analyzeJournalEntry(title, content, new GeminiHelper.AnalysisCallback() {
+                @Override
+                public void onAnalysisSuccess(String result) {
+                    runOnUiThread(() -> {
+                        // Parse result (same logic as btnAnalyze)
+                        String cleanResult = result.replace("*", "").trim();
+                        int moodIdx = cleanResult.indexOf("Mood:");
+                        int suggestionIdx = cleanResult.indexOf("Suggestion:");
+                        
+                        if (moodIdx != -1 && suggestionIdx != -1 && moodIdx < suggestionIdx) {
+                            currentMood = cleanResult.substring(moodIdx + 5, suggestionIdx).trim();
+                            currentSuggestion = cleanResult.substring(suggestionIdx + 11).trim();
+                        } else if (moodIdx != -1) {
+                            currentMood = cleanResult.substring(moodIdx + 5).trim();
+                            currentSuggestion = cleanResult;
+                        } else {
+                            currentMood = "Neutral";
+                            currentSuggestion = cleanResult;
+                        }
+                        
+                        // Proceed to save
+                        uploadMediaToCloudinary(title, content);
+                    });
+                }
+
+                @Override
+                public void onAnalysisFailure(Throwable t) {
+                    runOnUiThread(() -> {
+                        // If analysis fails, save anyway with default mood
+                        currentMood = "Neutral"; 
+                        Toast.makeText(AddJournalActivity.this, "Analysis failed, saving as Neutral", Toast.LENGTH_SHORT).show();
+                        uploadMediaToCloudinary(title, content);
+                    });
+                }
+            });
+        } else {
+            // Mood already exists, save directly
+            Toast.makeText(this, "Uploading media...", Toast.LENGTH_SHORT).show();
+            uploadMediaToCloudinary(title, content);
+        }
     }
 
     private void uploadMediaToCloudinary(String title, String content) {
@@ -435,7 +478,16 @@ public class AddJournalActivity extends AppCompatActivity {
     }
 
     private void saveToFirestore(String title, String content, List<String> imageUrls, List<String> videoUrls, List<String> videoThumbnails) {
+        String userId = FirebaseAuth.getInstance().getCurrentUser() != null ? FirebaseAuth.getInstance().getCurrentUser().getUid() : null;
+        
+        if (userId == null) {
+            Toast.makeText(this, "User not logged in!", Toast.LENGTH_SHORT).show();
+            btnSave.setEnabled(true);
+            return;
+        }
+
         JournalEntry entry = new JournalEntry();
+        entry.setUserId(userId);
         entry.setTitle(title);
         entry.setContent(content);
         entry.setDate(new Timestamp(new Date()));
