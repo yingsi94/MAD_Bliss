@@ -1,5 +1,18 @@
+# ===============================================
+# Android Studio / Gradle / Firebase
+# ===============================================
 
-#Android Studio
+# Built application files
+/build
+/app/build
+
+# Local configuration file (contains SDK path, etc.)
+/local.properties
+
+# Log files
+*.log
+
+# Android Studio files
 /.idea
 /.idea/caches
 /.idea/libraries
@@ -8,20 +21,23 @@
 /.idea/navEditor.xml
 /.idea/assetWizardSettings.xml
 
-*.iml
+# Gradle files
+.gradle/
+!/gradle/wrapper/gradle-wrapper.jar
+!/gradle-wrapper.properties
+!/gradlew
+!/gradlew.bat
 
-#Gradle
-.gradle
-build/
+# Keystore files (never commit your signing keys)
+*.jks
+*.keystore
 
-#Local configuration
-/local.properties
+# Firebase / Google Services
+# Leave this commented if you want to commit google-services.json
+# google-services.json
 
-#Other generated files
+# Other generated files
 .DS_Store
-/build
 /captures
 .externalNativeBuild
 .cxx
-local.properties
-app/google-services.json
