@@ -77,13 +77,12 @@ dependencies {
     implementation(libs.firebase.auth)
     implementation(libs.firebase.firestore)
     implementation(libs.firebase.storage)
-    implementation("com.google.firebase:firebase-firestore-ktx")
-    implementation("com.google.firebase:firebase-storage")
 
     // Additional from incoming branch
     implementation(libs.firebase.analytics)
     implementation(libs.generative.ai)
     implementation(libs.glide)
+    implementation(libs.picasso)
     implementation("com.cloudinary:cloudinary-android:2.8.0")
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)

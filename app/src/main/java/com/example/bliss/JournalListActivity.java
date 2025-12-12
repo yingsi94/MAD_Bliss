@@ -11,13 +11,17 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.bliss.adapter.JournalAdapter;
 import com.example.bliss.model.JournalEntry;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 public class JournalListActivity extends AppCompatActivity {
@@ -30,6 +34,7 @@ public class JournalListActivity extends AppCompatActivity {
     private FirebaseFirestore db;
     private FloatingActionButton fabAddJournal;
     private android.widget.ImageButton btnCalendar;
+    private ListenerRegistration firestoreListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,8 +71,21 @@ public class JournalListActivity extends AppCompatActivity {
         });
         
         setupSearch();
+    }
 
-        listenForUpdates();
+    @Override
+    protected void onStart() {
+        super.onStart();
+        startListening();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (firestoreListener != null) {
+            firestoreListener.remove();
+            firestoreListener = null;
+        }
     }
 
     private void setupSearch() {
@@ -104,9 +122,19 @@ public class JournalListActivity extends AppCompatActivity {
         adapter.notifyDataSetChanged();
     }
 
-    private void listenForUpdates() {
-        db.collection("journals")
-                .orderBy("date", Query.Direction.DESCENDING)
+    private void startListening() {
+        String userId = FirebaseAuth.getInstance().getCurrentUser() != null ? FirebaseAuth.getInstance().getCurrentUser().getUid() : null;
+
+        if (userId == null) {
+            return;
+        }
+
+        if (firestoreListener != null) {
+            firestoreListener.remove();
+        }
+
+        firestoreListener = db.collection("journals")
+                .whereEqualTo("userId", userId)
                 .addSnapshotListener(new EventListener<QuerySnapshot>() {
                     @Override
                     public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
@@ -125,6 +153,12 @@ public class JournalListActivity extends AppCompatActivity {
                                 allJournalList.add(entry);
                             }
                         }
+
+                        // Sort by date descending (newest first)
+                        Collections.sort(allJournalList, (e1, e2) -> {
+                            if (e1.getDate() == null || e2.getDate() == null) return 0;
+                            return e2.getDate().compareTo(e1.getDate()); // Descending
+                        });
                         
                         // Re-apply filter if search text exists
                         String currentSearch = etSearch.getText().toString();
