@@ -11,4 +11,18 @@
         <item name="cornerFamily">rounded</item>
         <item name="cornerSize">50%</item>
     </style>
+
+    <!-- NumberPicker Theme -->
+    <style name="NumberPickerTheme" parent="Theme.AppCompat.Light">
+        <item name="colorControlNormal">#A855F7</item>
+        <item name="android:textColorPrimary">#000000</item>
+        <item name="android:textSize">20sp</item>
+    </style>
+
+    <!-- White NumberPicker Theme for Breathing Settings -->
+    <style name="NumberPickerThemeWhite" parent="Theme.AppCompat.Light">
+        <item name="colorControlNormal">#FFFFFF</item>
+        <item name="android:textColorPrimary">#FFFFFF</item>
+        <item name="android:textSize">18sp</item>
+    </style>
 </resources>

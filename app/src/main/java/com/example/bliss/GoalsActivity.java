@@ -10,12 +10,13 @@ import android.widget.CheckBox;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,8 +28,6 @@ public class GoalsActivity extends AppCompatActivity {
     private List<GoalItem> goalList;
     private ProgressBar progressBar;
     private TextView tvProgressSubtitle, tvProgressPercentage;
-    private BottomNavigationView bottomNav;
-    private FloatingActionButton fabChat;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,7 +53,7 @@ public class GoalsActivity extends AppCompatActivity {
         goalList.add(new GoalItem("Sleep 8 hours nightly", true));
         goalList.add(new GoalItem("Journal 3 times this week", false));
         goalList.add(new GoalItem("Exercise 30 minutes", false));
-        goalList.add(new GoalItem("Journal 3 times this week", false));
+        goalList.add(new GoalItem("Practice gratitude daily", false));
 
         // Set adapter
         adapter = new GoalAdapter(goalList);
@@ -65,17 +64,17 @@ public class GoalsActivity extends AppCompatActivity {
 
         // Tab button listeners
         btnMeditation.setOnClickListener(v -> {
-            finish(); // Go back to RelaxationActivity (Meditation tab)
+            Intent intent = new Intent(GoalsActivity.this, RelaxationActivity.class);
+            startActivity(intent);
         });
 
         btnBreathing.setOnClickListener(v -> {
             Intent intent = new Intent(GoalsActivity.this, BreathingActivity.class);
             startActivity(intent);
-            finish();
         });
 
         btnGoals.setOnClickListener(v -> {
-            // Already on Goals tab
+            // Already on Goals tab - do nothing
         });
 
         // Add goal button
@@ -84,6 +83,31 @@ public class GoalsActivity extends AppCompatActivity {
             // You can implement a dialog or new activity to add goals
         });
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // Always highlight Goals tab when this activity is visible
+        selectTab(btnGoals);
+    }
+
+    private void selectTab(Button selectedButton) {
+        // Reset all tabs
+        resetTab(btnMeditation);
+        resetTab(btnBreathing);
+        resetTab(btnGoals);
+
+        // Highlight selected tab (white background, white text)
+        selectedButton.setBackgroundResource(R.drawable.tab_selected_white);
+        selectedButton.setTextColor(ContextCompat.getColor(this, android.R.color.white));
+    }
+
+    private void resetTab(Button button) {
+        // Unselected tabs (transparent background, purple text)
+        button.setBackgroundResource(android.R.color.transparent);
+        button.setTextColor(ContextCompat.getColor(this, R.color.purple_dark));
+    }
+
     private void updateProgress() {
         int completedCount = 0;
         for (GoalItem goal : goalList) {
@@ -125,6 +149,7 @@ public class GoalsActivity extends AppCompatActivity {
 
     // RecyclerView Adapter
     public class GoalAdapter extends RecyclerView.Adapter<GoalAdapter.ViewHolder> {
+
         private List<GoalItem> items;
 
         public GoalAdapter(List<GoalItem> items) {

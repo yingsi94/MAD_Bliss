@@ -45,7 +45,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="Meditation"
-                    android:textColor="#666666"
+                    android:textColor="#4A148C"
                     android:background="@android:color/transparent"
                     android:textAllCaps="false"
                     android:paddingVertical="8dp" />
@@ -56,7 +56,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="Breathing"
-                    android:textColor="#666666"
+                    android:textColor="#4A148C"
                     android:background="@android:color/transparent"
                     android:textAllCaps="false"
                     android:paddingVertical="8dp" />
@@ -67,8 +67,8 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="Goals"
-                    android:textColor="#000000"
-                    android:background="@drawable/tab_selected"
+                    android:textColor="#FFFFFF"
+                    android:background="@drawable/tab_selected_white"
                     android:textAllCaps="false"
                     android:paddingVertical="8dp" />
             </LinearLayout>

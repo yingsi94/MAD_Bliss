@@ -8,15 +8,18 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class RelaxationActivity extends AppCompatActivity {
+
     private RecyclerView rvMeditations;
     private MeditationAdapter adapter;
     private List<MeditationItem> meditationList;
@@ -31,24 +34,28 @@ public class RelaxationActivity extends AppCompatActivity {
         rvMeditations = findViewById(R.id.rvMeditations);
         rvMeditations.setLayoutManager(new LinearLayoutManager(this));
 
-        //Initialize tab buttons
+        // Initialize tab buttons
         btnMeditation = findViewById(R.id.btnMeditation);
         btnBreathing = findViewById(R.id.btnBreathing);
         btnGoals = findViewById(R.id.btnGoals);
 
+        // Set initial tab selection
+        selectTab(btnMeditation);
+
         // Create meditation items
         meditationList = new ArrayList<>();
-        meditationList.add(new MeditationItem("Body Scan", "Progressive relaxation", "10 min"));
-        meditationList.add(new MeditationItem("Mindful Breathing", "Focus on breath", "15 min"));
-        meditationList.add(new MeditationItem("Sleep Meditation", "Deep relaxation", "20 min"));
-        meditationList.add(new MeditationItem("Stress Relief", "Release tension", "12 min"));
+        meditationList.add(new MeditationItem("Custom Meditation", "Create your own meditation session", "Custom"));
+        meditationList.add(new MeditationItem("Quick Relax", "5 minute guided meditation", "5 min"));
+        meditationList.add(new MeditationItem("Deep Meditation", "20 minute immersive experience", "20 min"));
+        meditationList.add(new MeditationItem("Sleep Preparation", "Prepare your mind for sleep", "15 min"));
 
         // Set adapter
         adapter = new MeditationAdapter(meditationList);
         rvMeditations.setAdapter(adapter);
 
+        // Tab button listeners
         btnMeditation.setOnClickListener(v -> {
-            // Already on Meditation tab
+            // Already on Meditation tab - do nothing
         });
 
         btnBreathing.setOnClickListener(v -> {
@@ -58,9 +65,34 @@ public class RelaxationActivity extends AppCompatActivity {
         });
 
         btnGoals.setOnClickListener(v -> {
+            // Navigate to Goals Activity
             Intent intent = new Intent(RelaxationActivity.this, GoalsActivity.class);
             startActivity(intent);
         });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // Always highlight Meditation tab when this activity is visible
+        selectTab(btnMeditation);
+    }
+
+    private void selectTab(Button selectedButton) {
+        // Reset all tabs
+        resetTab(btnMeditation);
+        resetTab(btnBreathing);
+        resetTab(btnGoals);
+
+        // Highlight selected tab (white background, white text)
+        selectedButton.setBackgroundResource(R.drawable.tab_selected_white);
+        selectedButton.setTextColor(ContextCompat.getColor(this, android.R.color.white));
+    }
+
+    private void resetTab(Button button) {
+        // Unselected tabs (transparent background, purple text)
+        button.setBackgroundResource(android.R.color.transparent);
+        button.setTextColor(ContextCompat.getColor(this, R.color.purple_dark));
     }
 
     // Meditation Item Model Class
@@ -90,6 +122,7 @@ public class RelaxationActivity extends AppCompatActivity {
 
     // RecyclerView Adapter
     public class MeditationAdapter extends RecyclerView.Adapter<MeditationAdapter.ViewHolder> {
+
         private List<MeditationItem> items;
 
         public MeditationAdapter(List<MeditationItem> items) {
@@ -111,21 +144,15 @@ public class RelaxationActivity extends AppCompatActivity {
             holder.tvSubtitle.setText(item.getSubtitle());
             holder.tvDuration.setText(item.getDuration());
 
-            // Click listener to open player activity
+            // Click listener to open setup activity
             holder.itemView.setOnClickListener(v -> {
-                Intent intent = new Intent(RelaxationActivity.this, MeditationPlayerActivity.class);
-                intent.putExtra("title", item.getTitle());
-                intent.putExtra("subtitle", item.getSubtitle());
-                intent.putExtra("duration", item.getDuration());
+                Intent intent = new Intent(RelaxationActivity.this, MeditationSetupActivity.class);
                 startActivity(intent);
             });
 
             // Play button click listener
             holder.ivPlayButton.setOnClickListener(v -> {
-                Intent intent = new Intent(RelaxationActivity.this, MeditationPlayerActivity.class);
-                intent.putExtra("title", item.getTitle());
-                intent.putExtra("subtitle", item.getSubtitle());
-                intent.putExtra("duration", item.getDuration());
+                Intent intent = new Intent(RelaxationActivity.this, MeditationSetupActivity.class);
                 startActivity(intent);
             });
         }

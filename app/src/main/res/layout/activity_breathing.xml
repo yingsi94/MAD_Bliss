@@ -3,184 +3,400 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F5F5F5">
+    android:background="@drawable/breathing_gradient_bg">
 
-    <!-- Main Content ScrollView -->
+    <!-- Top App Bar with Tab -->
+    <LinearLayout
+        android:id="@+id/topBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="#00000000"
+        android:paddingTop="16dp"
+        android:paddingHorizontal="20dp">
+
+        <!-- Header Title -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Relaxation &amp; Goals"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:textColor="#FFFFFF"
+            android:layout_marginBottom="20dp" />
+
+        <!-- Tab Layout -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:background="@drawable/tab_background_white"
+            android:padding="4dp"
+            android:layout_marginBottom="24dp">
+
+            <Button
+                android:id="@+id/btnMeditation"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Meditation"
+                android:textColor="#FFFFFF"
+                android:background="@android:color/transparent"
+                android:textAllCaps="false"
+                android:paddingVertical="8dp" />
+
+            <Button
+                android:id="@+id/btnBreathing"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Breathing"
+                android:textColor="#4A148C"
+                android:background="@drawable/tab_selected_white"
+                android:textAllCaps="false"
+                android:paddingVertical="8dp" />
+
+            <Button
+                android:id="@+id/btnGoals"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Goals"
+                android:textColor="#FFFFFF"
+                android:background="@android:color/transparent"
+                android:textAllCaps="false"
+                android:paddingVertical="8dp" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- Main Content -->
     <ScrollView
-        android:id="@+id/scrollView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_below="@id/topBar"
         android:fillViewport="true">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="20dp">
+            android:gravity="center_horizontal"
+            android:paddingHorizontal="24dp"
+            android:paddingBottom="40dp">
 
-            <!-- Header Title -->
+            <!-- Breathing Pattern Title -->
             <TextView
-                android:id="@+id/tvTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:text="Relaxation &amp; Goals"
-                android:textSize="24sp"
+                android:text="4-7-8 Breathing"
+                android:textSize="28sp"
                 android:textStyle="bold"
-                android:textColor="#000000"
-                android:layout_marginBottom="20dp" />
+                android:textColor="#FFFFFF"
+                android:layout_marginBottom="8dp"
+                android:layout_marginTop="16dp" />
 
-            <!-- Tab Layout -->
-            <LinearLayout
-                android:layout_width="match_parent"
+            <TextView
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:background="@drawable/tab_background"
-                android:padding="4dp"
+                android:text="A calming breathing technique"
+                android:textSize="14sp"
+                android:textColor="#E0E0E0"
+                android:layout_marginBottom="32dp" />
+
+            <!-- Breathing Circle Container with Rings -->
+            <FrameLayout
+                android:layout_width="320dp"
+                android:layout_height="320dp"
                 android:layout_marginBottom="32dp">
 
-                <Button
-                    android:id="@+id/btnMeditation"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Meditation"
-                    android:textColor="#666666"
-                    android:background="@android:color/transparent"
-                    android:textAllCaps="false"
-                    android:paddingVertical="8dp" />
+                <!-- Outer Ring 1 -->
+                <View
+                    android:id="@+id/outerRing1"
+                    android:layout_width="300dp"
+                    android:layout_height="300dp"
+                    android:layout_gravity="center"
+                    android:background="@drawable/breathing_ring"
+                    android:alpha="0.3" />
 
-                <Button
-                    android:id="@+id/btnBreathing"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Breathing"
-                    android:textColor="#000000"
-                    android:background="@drawable/tab_selected"
-                    android:textAllCaps="false"
-                    android:paddingVertical="8dp" />
+                <!-- Outer Ring 2 -->
+                <View
+                    android:id="@+id/outerRing2"
+                    android:layout_width="270dp"
+                    android:layout_height="270dp"
+                    android:layout_gravity="center"
+                    android:background="@drawable/breathing_ring"
+                    android:alpha="0.4" />
 
-                <Button
-                    android:id="@+id/btnGoals"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Goals"
-                    android:textColor="#666666"
-                    android:background="@android:color/transparent"
-                    android:textAllCaps="false"
-                    android:paddingVertical="8dp" />
-            </LinearLayout>
-
-            <!-- Breathing Circle Container -->
-            <FrameLayout
-                android:layout_width="match_parent"
-                android:layout_height="280dp"
-                android:layout_marginBottom="32dp"
-                android:gravity="center">
-
+                <!-- Main Breathing Circle -->
                 <androidx.cardview.widget.CardView
                     android:id="@+id/breathingCircle"
                     android:layout_width="240dp"
                     android:layout_height="240dp"
                     android:layout_gravity="center"
                     app:cardCornerRadius="120dp"
-                    app:cardElevation="0dp"
-                    app:cardBackgroundColor="#B3E5FC">
+                    app:cardElevation="16dp"
+                    app:cardBackgroundColor="#FFFFFF">
 
-
-                <LinearLayout
+                    <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:orientation="vertical"
-                        android:gravity="center">
+                        android:gravity="center"
+                        android:padding="24dp">
 
+                        <!-- Breathing Action Icon -->
+                        <ImageView
+                            android:id="@+id/ivBreathingIcon"
+                            android:layout_width="64dp"
+                            android:layout_height="64dp"
+                            android:src="@drawable/ic_lungs"
+                            app:tint="#7B2CBF"
+                            android:layout_marginBottom="16dp" />
+
+                        <!-- Breathing Action Text -->
                         <TextView
                             android:id="@+id/tvBreathingAction"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Inhale"
-                            android:textSize="32sp"
+                            android:text="Ready"
+                            android:textSize="28sp"
                             android:textStyle="bold"
-                            android:textColor="#000000"
+                            android:textColor="#7B2CBF"
                             android:layout_marginBottom="8dp" />
 
+                        <!-- Timer Text -->
                         <TextView
                             android:id="@+id/tvBreathingTimer"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="4 seconds"
+                            android:text="Press Start"
                             android:textSize="16sp"
                             android:textColor="#666666" />
                     </LinearLayout>
-
                 </androidx.cardview.widget.CardView>
             </FrameLayout>
 
-            <!-- Start Button -->
-            <Button
-                android:id="@+id/btnStart"
-                android:layout_width="160dp"
-                android:layout_height="48dp"
-                android:layout_gravity="center_horizontal"
-                android:text="Start"
-                android:textSize="16sp"
-                android:textColor="#FFFFFF"
-                android:background="@drawable/button_gradient"
-                android:textAllCaps="false"
-                android:layout_marginBottom="32dp" />
-
-            <!-- Instructions Section -->
-            <TextView
+            <!-- Cycle Counter -->
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Instructions"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                android:textColor="#000000"
-                android:layout_marginBottom="12dp" />
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:layout_marginBottom="24dp">
 
-            <!-- Instruction List -->
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/ic_cycle"
+                    app:tint="#FFFFFF"
+                    android:layout_marginEnd="8dp" />
+
+                <TextView
+                    android:id="@+id/tvCycleCounter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Cycle 0 / 4"
+                    android:textSize="16sp"
+                    android:textColor="#FFFFFF"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <!-- Control Buttons -->
             <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:layout_marginBottom="32dp">
+
+                <!-- Start/Stop Button -->
+                <Button
+                    android:id="@+id/btnStart"
+                    android:layout_width="160dp"
+                    android:layout_height="56dp"
+                    android:text="Start"
+                    android:textSize="18sp"
+                    android:textColor="#7B2CBF"
+                    android:textStyle="bold"
+                    android:background="@drawable/button_white_rounded"
+                    android:textAllCaps="false"
+                    android:elevation="8dp"
+                    android:layout_marginEnd="12dp" />
+
+                <!-- Settings Button -->
+                <ImageButton
+                    android:id="@+id/btnSettings"
+                    android:layout_width="56dp"
+                    android:layout_height="56dp"
+                    android:src="@drawable/ic_settings"
+                    android:background="@drawable/circle_button_white"
+                    android:contentDescription="Settings"
+                    app:tint="#7B2CBF"
+                    android:elevation="8dp" />
+            </LinearLayout>
+
+            <!-- Instructions Card -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="8dp"
+                app:cardBackgroundColor="#FFFFFF"
+                android:layout_marginBottom="16dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="20dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="How it works"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:textColor="#000000"
+                        android:layout_marginBottom="16dp" />
+
+                    <!-- Instruction Steps -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginBottom="12dp">
+
+                        <View
+                            android:layout_width="8dp"
+                            android:layout_height="8dp"
+                            android:layout_marginTop="6dp"
+                            android:layout_marginEnd="12dp"
+                            android:background="@drawable/circle_dot"
+                            android:backgroundTint="#4CAF50" />
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Inhale slowly through your nose for 4 seconds"
+                            android:textSize="14sp"
+                            android:textColor="#333333" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginBottom="12dp">
+
+                        <View
+                            android:layout_width="8dp"
+                            android:layout_height="8dp"
+                            android:layout_marginTop="6dp"
+                            android:layout_marginEnd="12dp"
+                            android:background="@drawable/circle_dot"
+                            android:backgroundTint="#FF9800" />
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Hold your breath for 7 seconds"
+                            android:textSize="14sp"
+                            android:textColor="#333333" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <View
+                            android:layout_width="8dp"
+                            android:layout_height="8dp"
+                            android:layout_marginTop="6dp"
+                            android:layout_marginEnd="12dp"
+                            android:background="@drawable/circle_dot"
+                            android:backgroundTint="#2196F3" />
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Exhale completely through your mouth for 8 seconds"
+                            android:textSize="14sp"
+                            android:textColor="#333333" />
+                    </LinearLayout>
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <!-- Settings Dialog Content (Hidden initially) -->
+            <LinearLayout
+                android:id="@+id/settingsPanel"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:layout_marginStart="8dp">
+                android:visibility="gone"
+                android:background="@drawable/settings_panel_bg"
+                android:padding="20dp">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="1. Inhale quietly through your nose for 4 seconds"
-                    android:textSize="14sp"
-                    android:textColor="#333333"
-                    android:layout_marginBottom="8dp" />
+                    android:text="Settings"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:textColor="#FFFFFF"
+                    android:layout_marginBottom="16dp" />
 
-                <TextView
-                    android:layout_width="wrap_content"
+                <!-- Cycle Count Setting -->
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="2. Hold your breath for 7 seconds"
-                    android:textSize="14sp"
-                    android:textColor="#333333"
-                    android:layout_marginBottom="8dp" />
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_marginBottom="16dp">
 
-                <TextView
-                    android:layout_width="wrap_content"
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Number of Cycles"
+                        android:textSize="16sp"
+                        android:textColor="#FFFFFF" />
+
+                    <NumberPicker
+                        android:id="@+id/npCycles"
+                        android:layout_width="wrap_content"
+                        android:layout_height="80dp"
+                        android:theme="@style/NumberPickerThemeWhite" />
+                </LinearLayout>
+
+                <!-- Sound Toggle -->
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="3. Exhale completely through your mouth for 8 seconds"
-                    android:textSize="14sp"
-                    android:textColor="#333333"
-                    android:layout_marginBottom="8dp" />
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="4. Repeat 3-4 times"
-                    android:textSize="14sp"
-                    android:textColor="#333333" />
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Sound Notifications"
+                        android:textSize="16sp"
+                        android:textColor="#FFFFFF" />
 
+                    <androidx.appcompat.widget.SwitchCompat
+                        android:id="@+id/switchSound"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:checked="true" />
+                </LinearLayout>
             </LinearLayout>
 
         </LinearLayout>
     </ScrollView>
+
 </RelativeLayout>
