@@ -72,6 +72,7 @@
 
     <!-- Main Content -->
     <ScrollView
+        android:id="@+id/scrollView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/topBar"
@@ -116,8 +117,8 @@
                     android:layout_width="300dp"
                     android:layout_height="300dp"
                     android:layout_gravity="center"
-                    android:background="@drawable/breathing_ring"
-                    android:alpha="0.3" />
+                    android:alpha="0.3"
+                    android:background="@drawable/breathing_ring" />
 
                 <!-- Outer Ring 2 -->
                 <View
@@ -125,8 +126,8 @@
                     android:layout_width="270dp"
                     android:layout_height="270dp"
                     android:layout_gravity="center"
-                    android:background="@drawable/breathing_ring"
-                    android:alpha="0.4" />
+                    android:alpha="0.4"
+                    android:background="@drawable/breathing_ring" />
 
                 <!-- Main Breathing Circle -->
                 <androidx.cardview.widget.CardView
@@ -134,15 +135,15 @@
                     android:layout_width="240dp"
                     android:layout_height="240dp"
                     android:layout_gravity="center"
+                    app:cardBackgroundColor="#FFFFFF"
                     app:cardCornerRadius="120dp"
-                    app:cardElevation="16dp"
-                    app:cardBackgroundColor="#FFFFFF">
+                    app:cardElevation="16dp">
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:orientation="vertical"
                         android:gravity="center"
+                        android:orientation="vertical"
                         android:padding="24dp">
 
                         <!-- Breathing Action Icon -->
@@ -150,20 +151,20 @@
                             android:id="@+id/ivBreathingIcon"
                             android:layout_width="64dp"
                             android:layout_height="64dp"
+                            android:layout_marginBottom="16dp"
                             android:src="@drawable/ic_lungs"
-                            app:tint="#7B2CBF"
-                            android:layout_marginBottom="16dp" />
+                            app:tint="#7B2CBF" />
 
                         <!-- Breathing Action Text -->
                         <TextView
                             android:id="@+id/tvBreathingAction"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:layout_marginBottom="8dp"
                             android:text="Ready"
-                            android:textSize="28sp"
-                            android:textStyle="bold"
                             android:textColor="#7B2CBF"
-                            android:layout_marginBottom="8dp" />
+                            android:textSize="28sp"
+                            android:textStyle="bold" />
 
                         <!-- Timer Text -->
                         <TextView
@@ -171,8 +172,8 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Press Start"
-                            android:textSize="16sp"
-                            android:textColor="#666666" />
+                            android:textColor="#666666"
+                            android:textSize="16sp" />
                     </LinearLayout>
                 </androidx.cardview.widget.CardView>
             </FrameLayout>
@@ -217,7 +218,7 @@
                     android:layout_height="56dp"
                     android:text="Start"
                     android:textSize="18sp"
-                    android:textColor="#7B2CBF"
+                    android:textColor="#FFFFFF"
                     android:textStyle="bold"
                     android:background="@drawable/button_white_rounded"
                     android:textAllCaps="false"

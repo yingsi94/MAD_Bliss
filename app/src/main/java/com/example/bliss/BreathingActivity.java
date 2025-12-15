@@ -14,6 +14,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.NumberPicker;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -183,6 +184,10 @@ public class BreathingActivity extends AppCompatActivity {
                 settingsPanel.setVisibility(View.GONE);
             } else {
                 settingsPanel.setVisibility(View.VISIBLE);
+
+                // Scroll to the bottom to show the settings panel
+                final ScrollView scrollView = findViewById(R.id.scrollView); // assign an ID to your ScrollView
+                scrollView.post(() -> scrollView.smoothScrollTo(0, settingsPanel.getBottom()));
             }
         });
 

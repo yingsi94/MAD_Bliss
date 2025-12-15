@@ -297,11 +297,19 @@ public class MeditationPlayerActivity extends AppCompatActivity {
         scaleY.start();
     }
 
-    private void speak(String text) {
-        if (ttsReady && textToSpeech != null) {
-            textToSpeech.speak(text, TextToSpeech.QUEUE_FLUSH, null, null);
-        }
+    private void speak(String text) {if (ttsReady && textToSpeech != null) {
+        // ✅ START: NEW VOLUME CONTROL LOGIC
+        Bundle params = new Bundle();
+        // Set the volume to 40% of the normal media volume.
+        // You can change 0.4f to any value between 0.0 and 1.0.
+        params.putFloat(TextToSpeech.Engine.KEY_PARAM_VOLUME, 0.4f);
+
+        // The third argument is now the parameters bundle.
+        textToSpeech.speak(text, TextToSpeech.QUEUE_FLUSH, params, null);
+        // ✅ END: NEW VOLUME CONTROL LOGIC
     }
+    }
+
 
     private void startMeditation() {
         // Start countdown timer

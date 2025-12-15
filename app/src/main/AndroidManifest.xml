@@ -15,9 +15,10 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Bliss">
         <activity
-            android:name=".MeditationSetupActivity"
+            android:name=".AddEditGoalActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+            android:windowSoftInputMode="adjustResize"/>
         <activity
             android:name=".GoalsActivity"
             android:exported="false" />

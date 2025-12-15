@@ -131,8 +131,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:cardCornerRadius="16dp"
-            app:cardElevation="4dp"
-            app:cardBackgroundColor="#80FFFFFF"
+            app:cardElevation="0dp"
+            app:cardBackgroundColor="#33FFFFFF"
             android:layout_marginBottom="24dp">
 
             <TextView
@@ -140,7 +140,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Focus on your breath and let your body relax"
-                android:textSize="16sp"
+                android:textSize="18sp"
                 android:textColor="#333333"
                 android:textAlignment="center"
                 android:padding="20dp"
