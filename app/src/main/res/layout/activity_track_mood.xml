@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".TrackMoodFragment">
+    tools:context=".TrackMoodActivity">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -44,13 +44,13 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="32dp"
                     android:layout_marginBottom="32dp"
-                    android:fontFamily="@font/inter_light"
+                    android:fontFamily="@font/inter"
                     android:text=" Select your current mood"
                     android:textAlignment="center"
                     android:textSize="15sp" />
 
                 <com.google.android.material.button.MaterialButton
-                    android:id="@+id/button3"
+                    android:id="@+id/btnHappy"
                     style="@style/Widget.Material3.Button.OutlinedButton"
                     android:layout_width="match_parent"
                     android:layout_height="55dp"
@@ -71,7 +71,7 @@
                     app:strokeWidth="1.5dp" />
 
                 <com.google.android.material.button.MaterialButton
-                    android:id="@+id/button4"
+                    android:id="@+id/btnCalm"
                     style="@style/Widget.Material3.Button.OutlinedButton"
                     android:layout_width="match_parent"
                     android:layout_height="55dp"
@@ -92,7 +92,7 @@
                     app:strokeWidth="1.5dp" />
 
                 <com.google.android.material.button.MaterialButton
-                    android:id="@+id/button5"
+                    android:id="@+id/btnSad"
                     style="@style/Widget.Material3.Button.OutlinedButton"
                     android:layout_width="match_parent"
                     android:layout_height="55dp"
@@ -113,7 +113,7 @@
                     app:strokeWidth="1.5dp" />
 
                 <com.google.android.material.button.MaterialButton
-                    android:id="@+id/button6"
+                    android:id="@+id/btnStressed"
                     style="@style/Widget.Material3.Button.OutlinedButton"
                     android:layout_width="match_parent"
                     android:layout_height="55dp"
@@ -151,7 +151,7 @@
             app:layout_constraintVertical_bias="0.086" />
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/button8"
+            android:id="@+id/btnAIMS"
             style="@style/Widget.Material3.Button.OutlinedButton"
             android:layout_width="320dp"
             android:layout_height="42dp"
