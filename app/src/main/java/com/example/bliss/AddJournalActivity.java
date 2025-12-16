@@ -32,9 +32,12 @@ import android.graphics.BitmapFactory;
 import android.util.Base64;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.UUID;
 
 public class AddJournalActivity extends AppCompatActivity {
@@ -60,6 +63,12 @@ public class AddJournalActivity extends AppCompatActivity {
     private String entryId = null;
     private List<Uri> selectedImageUris = new ArrayList<>();
     private List<Uri> selectedVideoUris = new ArrayList<>();
+
+    // Date selected by the user for the journal entry (date-only)
+    private Date selectedDate;
+    private TextView tvSelectedDate;
+    private ImageView btnEditDate;
+    private LinearLayout lnDateRow;
     
     private ActivityResultLauncher<PickVisualMediaRequest> pickMultipleMedia;
 
@@ -82,6 +91,11 @@ public class AddJournalActivity extends AppCompatActivity {
         llSelectedImages = findViewById(R.id.llSelectedImages);
         llSelectedVideos = findViewById(R.id.llSelectedVideos);
         
+        // Date UI
+        tvSelectedDate = findViewById(R.id.tvSelectedDate);
+        btnEditDate = findViewById(R.id.btnEditDate);
+        lnDateRow = findViewById(R.id.lnDateRow);
+
         llProgress = findViewById(R.id.llProgress);
         progressBar = findViewById(R.id.progressBar);
         tvProgressStatus = findViewById(R.id.tvProgressStatus);
@@ -113,6 +127,15 @@ public class AddJournalActivity extends AppCompatActivity {
                 .setMediaType(ActivityResultContracts.PickVisualMedia.VideoOnly.INSTANCE)
                 .build()));
 
+        // Initialize selectedDate to today by default
+        selectedDate = new Date();
+        updateSelectedDateText();
+
+        // Date picker button
+        View.OnClickListener dateClickListener = v -> showDatePicker();
+        btnEditDate.setOnClickListener(dateClickListener);
+        lnDateRow.setOnClickListener(dateClickListener);
+
         // Check for existing entry to edit
         if (getIntent().hasExtra("journal_entry")) {
             JournalEntry entry = (JournalEntry) getIntent().getSerializableExtra("journal_entry");
@@ -122,6 +145,12 @@ public class AddJournalActivity extends AppCompatActivity {
                 etContent.setText(entry.getContent());
                 currentMood = entry.getMood();
                 currentSuggestion = entry.getSuggestion();
+
+                // If the entry has a date, use it to prefill the date picker
+                if (entry.getDate() != null) {
+                    selectedDate = entry.getDate().toDate();
+                    updateSelectedDateText();
+                }
                 
                 if (currentSuggestion != null && !currentSuggestion.isEmpty()) {
                     cvAiSuggestion.setVisibility(View.VISIBLE);
@@ -134,9 +163,6 @@ public class AddJournalActivity extends AppCompatActivity {
                         selectedImageUris.add(Uri.parse(uriStr));
                     }
                     showImages();
-                } else if (entry.getImageUri() != null) {
-                    selectedImageUris.add(Uri.parse(entry.getImageUri()));
-                    showImages();
                 }
 
                 // Load existing videos
@@ -144,9 +170,6 @@ public class AddJournalActivity extends AppCompatActivity {
                     for (String uriStr : entry.getVideoUris()) {
                         selectedVideoUris.add(Uri.parse(uriStr));
                     }
-                    showVideos();
-                } else if (entry.getVideoUri() != null) {
-                    selectedVideoUris.add(Uri.parse(entry.getVideoUri()));
                     showVideos();
                 }
             }
@@ -199,6 +222,11 @@ public class AddJournalActivity extends AppCompatActivity {
                             currentMood = "Neutral";
                             currentSuggestion = cleanResult;
                         }
+
+                        // Add emoji to mood
+                        String emoji = getMoodEmoji(currentMood);
+                        String displayResult = "Mood: " + currentMood + " " + emoji + "\n\nSuggestion: " + currentSuggestion;
+                        tvAiSuggestion.setText(displayResult);
                     });
                 }
 
@@ -213,6 +241,28 @@ public class AddJournalActivity extends AppCompatActivity {
                 }
             });
         });
+    }
+
+    private String getMoodEmoji(String mood) {
+        if (mood == null) return "😐";
+        String lowerMood = mood.toLowerCase();
+        if (lowerMood.contains("happy") || lowerMood.contains("joy") || lowerMood.contains("excited")) {
+            return "😊";
+        } else if (lowerMood.contains("sad") || lowerMood.contains("depressed") || lowerMood.contains("down")) {
+            return "😢";
+        } else if (lowerMood.contains("angry") || lowerMood.contains("mad") || lowerMood.contains("frustrated")) {
+            return "😠";
+        } else if (lowerMood.contains("anxious") || lowerMood.contains("nervous") || lowerMood.contains("worried")) {
+            return "😰";
+        } else if (lowerMood.contains("calm") || lowerMood.contains("peaceful") || lowerMood.contains("relaxed")) {
+            return "😌";
+        } else if (lowerMood.contains("tired") || lowerMood.contains("exhausted")) {
+            return "😴";
+        } else if (lowerMood.contains("love") || lowerMood.contains("grateful")) {
+            return "🥰";
+        } else {
+            return "😐";
+        }
     }
 
     private void showImages() {
@@ -236,7 +286,28 @@ public class AddJournalActivity extends AppCompatActivity {
             // Click to open full screen
             imageView.setOnClickListener(v -> {
                 Intent intent = new Intent(this, FullScreenImageActivity.class);
-                intent.putExtra("image_source", uri.toString());
+                
+                // Open full screen viewer starting at the selected image
+                ArrayList<String> mediaUris = new ArrayList<>();
+                ArrayList<String> mediaTypes = new ArrayList<>();
+
+                // Add images first
+                for (Uri u : selectedImageUris) {
+                    mediaUris.add(u.toString());
+                    mediaTypes.add("image");
+                }
+                // Then videos
+                for (Uri u : selectedVideoUris) {
+                    mediaUris.add(u.toString());
+                    mediaTypes.add("video");
+                }
+
+                int startIndex = mediaUris.indexOf(uri.toString());
+                if (startIndex == -1) startIndex = 0;
+
+                intent.putStringArrayListExtra("media_uris", mediaUris);
+                intent.putStringArrayListExtra("media_types", mediaTypes);
+                intent.putExtra("start_index", startIndex);
                 startActivity(intent);
             });
 
@@ -284,6 +355,26 @@ public class AddJournalActivity extends AppCompatActivity {
             imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
             Glide.with(this).load(uri).into(imageView);
             
+            // Play Icon Overlay
+            ImageView playIcon = new ImageView(this);
+            FrameLayout.LayoutParams playParams = new FrameLayout.LayoutParams(100, 100);
+            playParams.gravity = Gravity.CENTER;
+            playIcon.setLayoutParams(playParams);
+            playIcon.setImageResource(android.R.drawable.ic_media_play);
+            playIcon.setColorFilter(Color.WHITE);
+            
+            // Click to play video
+            imageView.setOnClickListener(v -> {
+                Intent intent = new Intent(Intent.ACTION_VIEW);
+                intent.setDataAndType(uri, "video/*");
+                intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                try {
+                    startActivity(intent);
+                } catch (Exception e) {
+                    Toast.makeText(this, "No video player found", Toast.LENGTH_SHORT).show();
+                }
+            });
+            
             // Delete Button (X)
             ImageButton btnDelete = new ImageButton(this);
             int btnSize = 70; // Increased size
@@ -305,6 +396,7 @@ public class AddJournalActivity extends AppCompatActivity {
             });
 
             container.addView(imageView);
+            container.addView(playIcon);
             container.addView(btnDelete);
             llSelectedVideos.addView(container);
         }
@@ -367,6 +459,40 @@ public class AddJournalActivity extends AppCompatActivity {
         }
     }
 
+    private void showDatePicker() {
+        final Calendar c = Calendar.getInstance();
+        c.setTime(selectedDate != null ? selectedDate : new Date());
+        int year = c.get(Calendar.YEAR);
+        int month = c.get(Calendar.MONTH);
+        int day = c.get(Calendar.DAY_OF_MONTH);
+
+        android.app.DatePickerDialog dpd = new android.app.DatePickerDialog(this, (view, y, m, d) -> {
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(selectedDate != null ? selectedDate : new Date());
+            cal.set(Calendar.YEAR, y);
+            cal.set(Calendar.MONTH, m);
+            cal.set(Calendar.DAY_OF_MONTH, d);
+            // Clear time components: keep only date precision (set to start of day)
+            cal.set(Calendar.HOUR_OF_DAY, 0);
+            cal.set(Calendar.MINUTE, 0);
+            cal.set(Calendar.SECOND, 0);
+            cal.set(Calendar.MILLISECOND, 0);
+
+            selectedDate = cal.getTime();
+            updateSelectedDateText();
+        }, year, month, day);
+
+        // Disallow future dates
+        dpd.getDatePicker().setMaxDate(System.currentTimeMillis());
+        dpd.show();
+    }
+
+    private void updateSelectedDateText() {
+        if (selectedDate == null) selectedDate = new Date();
+        SimpleDateFormat sdf = new SimpleDateFormat("MMM dd, yyyy", Locale.getDefault());
+        tvSelectedDate.setText(sdf.format(selectedDate));
+    }
+
     private void uploadMediaToCloudinary(String title, String content) {
         List<String> uploadedImageUrls = new ArrayList<>();
         List<String> uploadedVideoUrls = new ArrayList<>();
@@ -375,7 +501,7 @@ public class AddJournalActivity extends AppCompatActivity {
         
         if (totalUploads == 0) {
             // No media to upload, save directly
-            saveToFirestore(title, content, uploadedImageUrls, uploadedVideoUrls, new ArrayList<>());
+            saveToFirestore(title, content, uploadedImageUrls, uploadedVideoUrls);
             return;
         }
         
@@ -404,7 +530,7 @@ public class AddJournalActivity extends AppCompatActivity {
                         
                         if (completedUploads[0] == totalUploads) {
                             tvProgressStatus.setText("Saving journal...");
-                            saveToFirestore(title, content, uploadedImageUrls, uploadedVideoUrls, new ArrayList<>());
+                            saveToFirestore(title, content, uploadedImageUrls, uploadedVideoUrls);
                         }
                     });
                 }
@@ -449,7 +575,7 @@ public class AddJournalActivity extends AppCompatActivity {
                         
                         if (completedUploads[0] == totalUploads) {
                             tvProgressStatus.setText("Saving journal...");
-                            saveToFirestore(title, content, uploadedImageUrls, uploadedVideoUrls, new ArrayList<>());
+                            saveToFirestore(title, content, uploadedImageUrls, uploadedVideoUrls);
                         }
                     });
                 }
@@ -477,7 +603,7 @@ public class AddJournalActivity extends AppCompatActivity {
         }
     }
 
-    private void saveToFirestore(String title, String content, List<String> imageUrls, List<String> videoUrls, List<String> videoThumbnails) {
+    private void saveToFirestore(String title, String content, List<String> imageUrls, List<String> videoUrls) {
         String userId = FirebaseAuth.getInstance().getCurrentUser() != null ? FirebaseAuth.getInstance().getCurrentUser().getUid() : null;
         
         if (userId == null) {
@@ -490,16 +616,13 @@ public class AddJournalActivity extends AppCompatActivity {
         entry.setUserId(userId);
         entry.setTitle(title);
         entry.setContent(content);
-        entry.setDate(new Timestamp(new Date()));
+        // Use the selected date (date-only) when saving
+        entry.setDate(new Timestamp(selectedDate != null ? selectedDate : new Date()));
         entry.setImageUris(imageUrls);
         entry.setVideoUris(videoUrls);
-        entry.setVideoThumbnails(videoThumbnails);
         entry.setMood(currentMood);
         entry.setSuggestion(currentSuggestion);
         
-        if (!imageUrls.isEmpty()) entry.setImageUri(imageUrls.get(0));
-        if (!videoUrls.isEmpty()) entry.setVideoUri(videoUrls.get(0));
-
         if (entryId != null) {
             entry.setId(entryId);
             db.collection("journals").document(entryId)

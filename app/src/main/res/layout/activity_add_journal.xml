@@ -30,16 +30,16 @@
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:padding="12dp"
                 android:scaleType="fitCenter"
-                android:src="@drawable/arrow_13742267"
-                android:rotation="180"
-                android:elevation="2dp"/>
+                android:src="@drawable/ic_arrow_back"
+                app:tint="#000000"
+                android:elevation="0dp"/>
 
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="New Entry"
-                android:textSize="24sp"
+                android:textSize="22sp"
                 android:textStyle="bold"
                 android:textColor="@android:color/black"
                 android:gravity="center"
@@ -50,26 +50,26 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:cardCornerRadius="24dp"
-            app:cardElevation="0dp"
-            app:strokeWidth="1dp"
-            app:strokeColor="#E0E0E0"
+            app:cardElevation="4dp"
             app:cardBackgroundColor="@android:color/white">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:padding="20dp">
+                android:padding="24dp">
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="Title"
                     app:boxBackgroundMode="outline"
+                    app:boxBackgroundColor="#FAFAFA"
                     app:boxCornerRadiusTopStart="12dp"
                     app:boxCornerRadiusTopEnd="12dp"
                     app:boxCornerRadiusBottomStart="12dp"
-                    app:boxCornerRadiusBottomEnd="12dp">
+                    app:boxCornerRadiusBottomEnd="12dp"
+                    app:boxStrokeColor="@color/purple_500">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/etTitle"
@@ -86,10 +86,12 @@
                     android:layout_marginTop="16dp"
                     android:hint="Write your thoughts here..."
                     app:boxBackgroundMode="outline"
+                    app:boxBackgroundColor="#FAFAFA"
                     app:boxCornerRadiusTopStart="12dp"
                     app:boxCornerRadiusTopEnd="12dp"
                     app:boxCornerRadiusBottomStart="12dp"
-                    app:boxCornerRadiusBottomEnd="12dp">
+                    app:boxCornerRadiusBottomEnd="12dp"
+                    app:boxStrokeColor="@color/purple_500">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/etContent"
@@ -98,8 +100,64 @@
                         android:gravity="top"
                         android:inputType="textMultiLine|textCapSentences"
                         android:minLines="8"
-                        android:textSize="16sp" />
+                        android:textSize="16sp"
+                        android:background="@null"/>
                 </com.google.android.material.textfield.TextInputLayout>
+
+                <!-- Date selector: allows picking a custom date for the journal entry -->
+                <LinearLayout
+                    android:id="@+id/lnDateRow"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:background="@drawable/bg_input_field"
+                    android:padding="12dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:foreground="?attr/selectableItemBackground">
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@android:drawable/ic_menu_today"
+                        app:tint="#757575"
+                        android:contentDescription="Date Icon"/>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:layout_marginStart="12dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Date"
+                            android:textSize="12sp"
+                            android:textColor="#757575"/>
+
+                        <TextView
+                            android:id="@+id/tvSelectedDate"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Today"
+                            android:textColor="@android:color/black"
+                            android:textSize="16sp"
+                            android:textStyle="bold"/>
+                    </LinearLayout>
+
+                    <ImageView
+                        android:id="@+id/btnEditDate"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/edit"
+                        app:tint="#757575"
+                        android:contentDescription="Edit Date"/>
+
+                </LinearLayout>
 
                 <HorizontalScrollView
                     android:layout_width="match_parent"
@@ -128,52 +186,54 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="20dp"
+                    android:layout_marginTop="24dp"
                     android:orientation="horizontal">
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/btnAddPhoto"
                         style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                         android:layout_width="0dp"
-                        android:layout_height="wrap_content"
+                        android:layout_height="56dp"
                         android:layout_marginEnd="8dp"
                         android:layout_weight="1"
                         android:text="Photo"
                         android:textColor="@color/purple_500"
-                        app:cornerRadius="12dp"
+                        app:cornerRadius="16dp"
                         app:icon="@drawable/photo"
-                        app:strokeColor="@color/purple_500" />
+                        app:strokeColor="@color/purple_500"
+                        app:strokeWidth="1dp"/>
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/btnAddVideo"
                         style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                         android:layout_width="0dp"
-                        android:layout_height="wrap_content"
+                        android:layout_height="56dp"
                         android:layout_marginStart="8dp"
                         android:layout_weight="1"
                         android:text="Video"
                         android:textColor="@color/purple_500"
-                        app:cornerRadius="12dp"
+                        app:cornerRadius="16dp"
                         app:icon="@drawable/video"
-                        app:strokeColor="@color/purple_500" />
+                        app:strokeColor="@color/purple_500"
+                        app:strokeWidth="1dp"/>
                 </LinearLayout>
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnAnalyze"
-                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
                     android:layout_width="match_parent"
-                    android:layout_height="56dp"
+                    android:layout_height="60dp"
                     android:layout_marginTop="16dp"
                     android:text="Analyze Mood with AI"
                     android:textColor="@color/purple_500"
                     android:textSize="16sp"
                     android:textStyle="bold"
-                    app:cornerRadius="16dp"
-                    app:strokeColor="@color/purple_500"
-                    app:strokeWidth="1dp"
+                    app:backgroundTint="#F3E5F5"
+                    app:cornerRadius="20dp"
                     app:icon="@drawable/analysis"
                     app:iconTint="@null"
-                    app:iconGravity="textStart" />
+                    app:iconGravity="textStart"
+                    android:elevation="0dp"/>
 
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
@@ -226,7 +286,8 @@
                 app:cornerRadius="28dp"
                 android:textStyle="bold"
                 app:icon="@android:drawable/ic_menu_save"
-                app:iconTint="@android:color/white"/>
+                app:iconTint="@android:color/white"
+                android:elevation="4dp"/>
         </LinearLayout>
 
         <LinearLayout

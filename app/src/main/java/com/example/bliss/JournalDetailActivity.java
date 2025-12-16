@@ -107,34 +107,50 @@ public class JournalDetailActivity extends AppCompatActivity {
             for (String uriStr : entry.getImageUris()) {
                 addImageToLayout(uriStr);
             }
-        } else if (entry.getImageUri() != null && !entry.getImageUri().isEmpty()) {
-            addImageToLayout(entry.getImageUri());
         }
 
         llJournalVideos.removeAllViews();
         if (entry.getVideoUris() != null && !entry.getVideoUris().isEmpty()) {
             for (int i = 0; i < entry.getVideoUris().size(); i++) {
                 String uriStr = entry.getVideoUris().get(i);
-                String thumb = (entry.getVideoThumbnails() != null && entry.getVideoThumbnails().size() > i) 
-                        ? entry.getVideoThumbnails().get(i) : null;
-                addVideoToLayout(Uri.parse(uriStr), thumb);
+                // We don't have thumbnails anymore in the model, so passing null
+                addVideoToLayout(Uri.parse(uriStr), null);
             }
-        } else if (entry.getVideoUri() != null && !entry.getVideoUri().isEmpty()) {
-            String thumb = (entry.getVideoThumbnails() != null && !entry.getVideoThumbnails().isEmpty()) 
-                    ? entry.getVideoThumbnails().get(0) : null;
-            addVideoToLayout(Uri.parse(entry.getVideoUri()), thumb);
         }
 
         if (entry.getMood() != null && !entry.getMood().isEmpty()) {
-            tvMood.setText(entry.getMood());
+            String emoji = getMoodEmoji(entry.getMood());
+            tvMood.setText(entry.getMood() + " " + emoji);
         } else {
-            tvMood.setText("Not analyzed");
+            tvMood.setText("Not analyzed 😐");
         }
 
         if (entry.getSuggestion() != null && !entry.getSuggestion().isEmpty()) {
             tvSuggestion.setText(entry.getSuggestion());
         } else {
             tvSuggestion.setText("No suggestion available");
+        }
+    }
+
+    private String getMoodEmoji(String mood) {
+        if (mood == null) return "😐";
+        String lowerMood = mood.toLowerCase();
+        if (lowerMood.contains("happy") || lowerMood.contains("joy") || lowerMood.contains("excited")) {
+            return "😊";
+        } else if (lowerMood.contains("sad") || lowerMood.contains("depressed") || lowerMood.contains("down")) {
+            return "😢";
+        } else if (lowerMood.contains("angry") || lowerMood.contains("mad") || lowerMood.contains("frustrated")) {
+            return "😠";
+        } else if (lowerMood.contains("anxious") || lowerMood.contains("nervous") || lowerMood.contains("worried")) {
+            return "😰";
+        } else if (lowerMood.contains("calm") || lowerMood.contains("peaceful") || lowerMood.contains("relaxed")) {
+            return "😌";
+        } else if (lowerMood.contains("tired") || lowerMood.contains("exhausted")) {
+            return "😴";
+        } else if (lowerMood.contains("love") || lowerMood.contains("grateful")) {
+            return "🥰";
+        } else {
+            return "😐";
         }
     }
 
@@ -175,12 +191,43 @@ public class JournalDetailActivity extends AppCompatActivity {
         
         // Click to open full screen
         imageView.setOnClickListener(v -> {
-            Intent intent = new Intent(this, FullScreenImageActivity.class);
-            intent.putExtra("image_source", imageSource);
-            startActivity(intent);
+            openFullScreenMedia(imageSource);
         });
         
         llJournalImages.addView(imageView);
+    }
+
+    private void openFullScreenMedia(String currentMediaUri) {
+        Intent intent = new Intent(this, FullScreenImageActivity.class);
+        
+        java.util.ArrayList<String> mediaUris = new java.util.ArrayList<>();
+        java.util.ArrayList<String> mediaTypes = new java.util.ArrayList<>();
+        
+        // Add all images
+        if (entry.getImageUris() != null) {
+            for (String uri : entry.getImageUris()) {
+                mediaUris.add(uri);
+                mediaTypes.add("image");
+            }
+        }
+        
+        // Add all videos
+        if (entry.getVideoUris() != null) {
+            for (String uri : entry.getVideoUris()) {
+                mediaUris.add(uri);
+                mediaTypes.add("video");
+            }
+        }
+        
+        // Find index
+        int index = mediaUris.indexOf(currentMediaUri);
+        if (index == -1) index = 0;
+        
+        intent.putStringArrayListExtra("media_uris", mediaUris);
+        intent.putStringArrayListExtra("media_types", mediaTypes);
+        intent.putExtra("start_index", index);
+        
+        startActivity(intent);
     }
 
     private void addVideoToLayout(Uri uri, String thumbnailBase64) {
@@ -230,97 +277,30 @@ public class JournalDetailActivity extends AppCompatActivity {
         container.addView(thumbView);
         container.addView(playIcon);
 
-        // On Click -> Play Video
+        // On Click -> Open Full Screen Media Viewer
         container.setOnClickListener(v -> {
-            if (uri.toString().startsWith("http")) {
-                // Remote URL (Cloudinary) - Play directly
-                playVideo(uri);
-            } else {
-                // Local File - Check existence first
-                try {
-                    getContentResolver().openInputStream(uri).close();
-                    playVideo(uri);
-                } catch (Exception e) {
-                    Toast.makeText(this, "Cannot play video: File not found on this device", Toast.LENGTH_LONG).show();
-                }
-            }
+            openFullScreenMedia(uri.toString());
         });
 
         llJournalVideos.addView(container);
     }
 
-    private void playVideo(Uri uri) {
-        // Create a dialog or full screen activity to play video
-        android.app.Dialog dialog = new android.app.Dialog(this, android.R.style.Theme_Black_NoTitleBar_Fullscreen);
-        dialog.setContentView(R.layout.activity_full_screen_image); // Reuse layout but replace image with video
-        
-        android.widget.RelativeLayout root = dialog.findViewById(R.id.ivFullScreen).getParent() instanceof android.widget.RelativeLayout 
-                ? (android.widget.RelativeLayout) dialog.findViewById(R.id.ivFullScreen).getParent() : null;
-        
-        if (root != null) {
-            root.removeView(root.findViewById(R.id.ivFullScreen));
-            
-            VideoView videoView = new VideoView(this);
-            android.widget.RelativeLayout.LayoutParams params = new android.widget.RelativeLayout.LayoutParams(
-                    android.widget.RelativeLayout.LayoutParams.MATCH_PARENT,
-                    android.widget.RelativeLayout.LayoutParams.MATCH_PARENT);
-            params.addRule(android.widget.RelativeLayout.CENTER_IN_PARENT);
-            videoView.setLayoutParams(params);
-            
-            MediaController mediaController = new MediaController(this);
-            videoView.setMediaController(mediaController);
-            mediaController.setAnchorView(videoView);
-            
-            root.addView(videoView, 0);
-            
-            // Add loading indicator
-            android.widget.ProgressBar progressBar = new android.widget.ProgressBar(this);
-            android.widget.RelativeLayout.LayoutParams progressParams = new android.widget.RelativeLayout.LayoutParams(
-                    android.widget.RelativeLayout.LayoutParams.WRAP_CONTENT,
-                    android.widget.RelativeLayout.LayoutParams.WRAP_CONTENT);
-            progressParams.addRule(android.widget.RelativeLayout.CENTER_IN_PARENT);
-            progressBar.setLayoutParams(progressParams);
-            root.addView(progressBar);
-
-            videoView.setVideoURI(uri);
-            android.util.Log.d("JournalDetail", "Attempting to play video: " + uri.toString());
-            
-            videoView.setOnPreparedListener(mp -> {
-                progressBar.setVisibility(android.view.View.GONE);
-                videoView.start();
-            });
-            
-            videoView.setOnErrorListener((mp, what, extra) -> {
-                progressBar.setVisibility(android.view.View.GONE);
-                String errorMsg = "Unknown error";
-                if (what == android.media.MediaPlayer.MEDIA_ERROR_SERVER_DIED) errorMsg = "Server died";
-                else if (what == android.media.MediaPlayer.MEDIA_ERROR_UNKNOWN) errorMsg = "Unknown error";
-                
-                Toast.makeText(this, "Cannot play video: " + errorMsg + " (" + what + "," + extra + ")", Toast.LENGTH_LONG).show();
-                return true;
-            });
-        }
-        
-        dialog.findViewById(R.id.btnClose).setOnClickListener(v -> dialog.dismiss());
-        dialog.show();
-    }
-
-    // Old method kept for reference but unused
-    private void addVideoToLayout(Uri uri) {
-        addVideoToLayout(uri, null);
-    }
-
     private void deleteEntry() {
-        if (entry != null && entry.getId() != null) {
-            db.collection("journals").document(entry.getId())
-                    .delete()
-                    .addOnSuccessListener(aVoid -> {
-                        Toast.makeText(JournalDetailActivity.this, "Journal deleted", Toast.LENGTH_SHORT).show();
-                        finish();
-                    })
-                    .addOnFailureListener(e -> {
-                        Toast.makeText(JournalDetailActivity.this, "Error deleting journal", Toast.LENGTH_SHORT).show();
-                    });
-        }
+        if (entry == null || entry.getId() == null) return;
+
+        new androidx.appcompat.app.AlertDialog.Builder(this)
+                .setTitle("Delete Entry")
+                .setMessage("Are you sure you want to delete this journal entry?")
+                .setPositiveButton("Delete", (dialog, which) -> {
+                    db.collection("journals").document(entry.getId())
+                            .delete()
+                            .addOnSuccessListener(aVoid -> {
+                                Toast.makeText(JournalDetailActivity.this, "Entry deleted", Toast.LENGTH_SHORT).show();
+                                finish();
+                            })
+                            .addOnFailureListener(e -> Toast.makeText(JournalDetailActivity.this, "Error deleting entry", Toast.LENGTH_SHORT).show());
+                })
+                .setNegativeButton("Cancel", null)
+                .show();
     }
 }

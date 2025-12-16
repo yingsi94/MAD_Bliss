@@ -4,14 +4,10 @@
     android:layout_height="match_parent"
     android:background="@android:color/black">
 
-    <ImageView
-        android:id="@+id/ivFullScreen"
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/viewPager"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_centerInParent="true"
-        android:adjustViewBounds="true"
-        android:contentDescription="Full screen image"
-        android:scaleType="fitCenter" />
+        android:layout_height="match_parent" />
 
     <ImageButton
         android:id="@+id/btnClose"
