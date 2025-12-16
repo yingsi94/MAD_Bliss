@@ -43,7 +43,7 @@
                         android:layout_height="wrap_content"
                         android:text="My Journal"
                         android:textColor="@android:color/black"
-                        android:textSize="32sp"
+                        android:textSize="24sp"
                         android:textStyle="bold" />
                 </LinearLayout>
 
@@ -81,14 +81,14 @@
                 <EditText
                     android:id="@+id/etSearch"
                     android:layout_width="match_parent"
-                    android:layout_height="56dp"
+                    android:layout_height="45dp"
                     android:background="@android:color/transparent"
                     android:drawableStart="@android:drawable/ic_menu_search"
                     android:drawablePadding="12dp"
+                    android:drawableTint="#757575"
                     android:hint="Search your memories..."
                     android:paddingHorizontal="16dp"
-                    android:textSize="16sp"
-                    android:drawableTint="#757575"/>
+                    android:textSize="16sp" />
             </com.google.android.material.card.MaterialCardView>
 
             <androidx.recyclerview.widget.RecyclerView

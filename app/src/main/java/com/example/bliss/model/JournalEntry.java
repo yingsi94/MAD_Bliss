@@ -15,21 +15,17 @@ public class JournalEntry implements Serializable {
     private Date date; // Changed from Timestamp to Date for Serializable compatibility
     private String mood;
     private String suggestion;
-    private String imageUri;
-    private String videoUri;
     private List<String> imageUris;
     private List<String> videoUris;
-    private List<String> videoThumbnails;
 
     public JournalEntry() {
         // Required empty constructor for Firestore
     }
 
-    public JournalEntry(String title, String content, Timestamp date, String imageUri) {
+    public JournalEntry(String title, String content, Timestamp date) {
         this.title = title;
         this.content = content;
         this.date = date != null ? date.toDate() : new Date();
-        this.imageUri = imageUri;
     }
 
     @Exclude public String getId() { return id; }
@@ -53,18 +49,9 @@ public class JournalEntry implements Serializable {
     public String getSuggestion() { return suggestion; }
     public void setSuggestion(String suggestion) { this.suggestion = suggestion; }
 
-    public String getImageUri() { return imageUri; }
-    public void setImageUri(String imageUri) { this.imageUri = imageUri; }
-
-    public String getVideoUri() { return videoUri; }
-    public void setVideoUri(String videoUri) { this.videoUri = videoUri; }
-
     public List<String> getImageUris() { return imageUris; }
     public void setImageUris(List<String> imageUris) { this.imageUris = imageUris; }
 
     public List<String> getVideoUris() { return videoUris; }
     public void setVideoUris(List<String> videoUris) { this.videoUris = videoUris; }
-
-    public List<String> getVideoThumbnails() { return videoThumbnails; }
-    public void setVideoThumbnails(List<String> videoThumbnails) { this.videoThumbnails = videoThumbnails; }
 }

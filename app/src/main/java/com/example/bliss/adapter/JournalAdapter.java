@@ -86,7 +86,7 @@ public class JournalAdapter extends RecyclerView.Adapter<JournalAdapter.JournalV
 
     public class JournalViewHolder extends RecyclerView.ViewHolder {
         TextView tvDate, tvTitle, tvContentSnippet, tvMoreImagesCount;
-        ImageView ivMoodIcon, ivJournalImage, ivJournalImage2;
+        ImageView ivMoodIcon, ivJournalImage, ivJournalImage2, ivPlayIcon, ivPlayIcon2;
         View mediaContainer, frameImage2;
 
         public JournalViewHolder(@NonNull View itemView) {
@@ -96,7 +96,9 @@ public class JournalAdapter extends RecyclerView.Adapter<JournalAdapter.JournalV
             tvContentSnippet = itemView.findViewById(R.id.tvContentSnippet);
             ivMoodIcon = itemView.findViewById(R.id.ivMoodIcon);
             ivJournalImage = itemView.findViewById(R.id.ivJournalImage);
+            ivPlayIcon = itemView.findViewById(R.id.ivPlayIcon);
             ivJournalImage2 = itemView.findViewById(R.id.ivJournalImage2);
+            ivPlayIcon2 = itemView.findViewById(R.id.ivPlayIcon2);
             tvMoreImagesCount = itemView.findViewById(R.id.tvMoreImagesCount);
             mediaContainer = itemView.findViewById(R.id.mediaContainer);
             frameImage2 = itemView.findViewById(R.id.frameImage2);
@@ -114,7 +116,9 @@ public class JournalAdapter extends RecyclerView.Adapter<JournalAdapter.JournalV
             // Reset visibility
             mediaContainer.setVisibility(View.GONE);
             ivJournalImage.setVisibility(View.GONE);
+            ivPlayIcon.setVisibility(View.GONE);
             frameImage2.setVisibility(View.GONE);
+            ivPlayIcon2.setVisibility(View.GONE);
             tvMoreImagesCount.setVisibility(View.GONE);
 
 
@@ -135,71 +139,33 @@ public class JournalAdapter extends RecyclerView.Adapter<JournalAdapter.JournalV
                     }
                 }
             } 
-            // Check for single image (backward compatibility)
-            else if (entry.getImageUri() != null && !entry.getImageUri().isEmpty()) {
-                mediaContainer.setVisibility(View.VISIBLE);
-                ivJournalImage.setVisibility(View.VISIBLE);
-                loadImage(entry.getImageUri(), ivJournalImage);
-            }
             // Check for multiple videos
             else if (entry.getVideoUris() != null && !entry.getVideoUris().isEmpty()) {
                 mediaContainer.setVisibility(View.VISIBLE);
                 ivJournalImage.setVisibility(View.VISIBLE);
+                ivPlayIcon.setVisibility(View.VISIBLE);
                 
-                // Try to load thumbnail if available
-                String thumb1 = (entry.getVideoThumbnails() != null && entry.getVideoThumbnails().size() > 0) 
-                        ? entry.getVideoThumbnails().get(0) : null;
-                
-                if (thumb1 != null && !thumb1.isEmpty()) {
-                    loadImage(thumb1, ivJournalImage);
-                } else {
-                    // Fallback to URI loading (might fail on emulator)
-                    Glide.with(context)
-                         .load(entry.getVideoUris().get(0))
-                         .placeholder(android.R.drawable.ic_media_play)
-                         .error(android.R.drawable.ic_media_play)
-                         .into(ivJournalImage);
-                }
+                // Fallback to URI loading (might fail on emulator)
+                Glide.with(context)
+                        .load(entry.getVideoUris().get(0))
+                        .placeholder(android.R.drawable.ic_media_play)
+                        .error(android.R.drawable.ic_media_play)
+                        .into(ivJournalImage);
 
                 if (entry.getVideoUris().size() > 1) {
                     frameImage2.setVisibility(View.VISIBLE);
+                    ivPlayIcon2.setVisibility(View.VISIBLE);
                     
-                    String thumb2 = (entry.getVideoThumbnails() != null && entry.getVideoThumbnails().size() > 1) 
-                            ? entry.getVideoThumbnails().get(1) : null;
-
-                    if (thumb2 != null && !thumb2.isEmpty()) {
-                        loadImage(thumb2, ivJournalImage2);
-                    } else {
-                        Glide.with(context)
-                             .load(entry.getVideoUris().get(1))
-                             .placeholder(android.R.drawable.ic_media_play)
-                             .error(android.R.drawable.ic_media_play)
-                             .into(ivJournalImage2);
-                    }
+                    Glide.with(context)
+                            .load(entry.getVideoUris().get(1))
+                            .placeholder(android.R.drawable.ic_media_play)
+                            .error(android.R.drawable.ic_media_play)
+                            .into(ivJournalImage2);
 
                     if (entry.getVideoUris().size() > 2) {
                         tvMoreImagesCount.setVisibility(View.VISIBLE);
                         tvMoreImagesCount.setText("+" + (entry.getVideoUris().size() - 2));
                     }
-                }
-            }
-            // Check for single video (backward compatibility)
-            else if (entry.getVideoUri() != null && !entry.getVideoUri().isEmpty()) {
-                mediaContainer.setVisibility(View.VISIBLE);
-                ivJournalImage.setVisibility(View.VISIBLE);
-                
-                // Try to load thumbnail if available
-                String thumb1 = (entry.getVideoThumbnails() != null && entry.getVideoThumbnails().size() > 0) 
-                        ? entry.getVideoThumbnails().get(0) : null;
-                
-                if (thumb1 != null && !thumb1.isEmpty()) {
-                    loadImage(thumb1, ivJournalImage);
-                } else {
-                    Glide.with(context)
-                         .load(entry.getVideoUri())
-                         .placeholder(android.R.drawable.ic_media_play)
-                         .error(android.R.drawable.ic_media_play)
-                         .into(ivJournalImage);
                 }
             }
 

@@ -1,14 +1,11 @@
 package com.example.bliss;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.net.Uri;
 import android.os.Bundle;
-import android.util.Base64;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import androidx.appcompat.app.AppCompatActivity;
-import com.bumptech.glide.Glide;
+import androidx.viewpager2.widget.ViewPager2;
+import com.example.bliss.adapter.FullScreenMediaAdapter;
+import java.util.ArrayList;
 
 public class FullScreenImageActivity extends AppCompatActivity {
 
@@ -17,32 +14,28 @@ public class FullScreenImageActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_full_screen_image);
 
-        ImageView ivFullScreen = findViewById(R.id.ivFullScreen);
+        ViewPager2 viewPager = findViewById(R.id.viewPager);
         ImageButton btnClose = findViewById(R.id.btnClose);
 
-        String imageSource = getIntent().getStringExtra("image_source");
+        ArrayList<String> mediaUris = getIntent().getStringArrayListExtra("media_uris");
+        ArrayList<String> mediaTypes = getIntent().getStringArrayListExtra("media_types");
+        int startIndex = getIntent().getIntExtra("start_index", 0);
 
-        if (imageSource != null) {
-            if (imageSource.startsWith("http")) {
-                // Cloudinary or other web URL
-                Glide.with(this)
-                    .load(imageSource)
-                    .into(ivFullScreen);
-            } else if (imageSource.startsWith("content") || imageSource.startsWith("file")) {
-                // Local URI
-                Glide.with(this).load(imageSource).into(ivFullScreen);
-            } else {
-                // Base64 (fallback for old entries)
-                try {
-                    byte[] imageBytes = Base64.decode(imageSource, Base64.DEFAULT);
-                    Glide.with(this)
-                            .asBitmap()
-                            .load(imageBytes)
-                            .into(ivFullScreen);
-                } catch (IllegalArgumentException e) {
-                    Glide.with(this).load(imageSource).into(ivFullScreen);
-                }
+        // Backward compatibility for single image intent
+        if (mediaUris == null) {
+            String imageSource = getIntent().getStringExtra("image_source");
+            if (imageSource != null) {
+                mediaUris = new ArrayList<>();
+                mediaUris.add(imageSource);
+                mediaTypes = new ArrayList<>();
+                mediaTypes.add("image");
             }
+        }
+
+        if (mediaUris != null && mediaTypes != null) {
+            FullScreenMediaAdapter adapter = new FullScreenMediaAdapter(this, mediaUris, mediaTypes);
+            viewPager.setAdapter(adapter);
+            viewPager.setCurrentItem(startIndex, false);
         }
 
         btnClose.setOnClickListener(v -> finish());
