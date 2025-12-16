@@ -15,12 +15,12 @@
 
     # Android Studio/IntelliJ files
     # The .idea directory contains local workspace settings.
-    /.idea
+    .idea/
 
     # Gradle files
     .gradle/
     !/gradle/wrapper/gradle-wrapper.jar
-    !/gradle-wrapper.properties
+    !/gradle/wrapper/gradle-wrapper.properties
     !/gradlew
     !/gradlew.bat
 
@@ -33,4 +33,12 @@
     /captures
     .externalNativeBuild
     .cxx
+
+    #Firebase
+    google-services.json
+
+    #Generated APK / AAB
+    *.apk
+    *.aab
+
     
