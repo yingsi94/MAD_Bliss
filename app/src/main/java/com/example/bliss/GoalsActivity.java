@@ -22,6 +22,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.button.MaterialButton;
 import com.google.firebase.Timestamp;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -45,11 +46,13 @@ public class GoalsActivity extends AppCompatActivity {
     private GoalAdapter adapter;
     private List<Goal> goalList;
     private List<Goal> filteredGoalList;
-    private Map<String, Button> categoryChipsMap; // Maps category name to the Button view
-    private Map<String, String> categoryEmojiMap; // Maps category name to its emoji
+    private Map<String, Button> categoryChipsMap;
+    private Map<String, String> categoryEmojiMap;
 
     // --- State & Firebase ---
     private FirebaseFirestore firestore;
+    private FirebaseAuth auth;
+    private String userId;
     private String selectedCategory = "All";
 
     @Override
@@ -58,6 +61,19 @@ public class GoalsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_goals);
 
         firestore = FirebaseFirestore.getInstance();
+        auth = FirebaseAuth.getInstance();
+
+        // Get current user ID
+        if (auth.getCurrentUser() != null) {
+            userId = auth.getCurrentUser().getUid();
+        } else {
+            // If user is not logged in, redirect to login
+            Toast.makeText(this, "Please login first", Toast.LENGTH_SHORT).show();
+            startActivity(new Intent(this, LoginActivity.class));
+            finish();
+            return;
+        }
+
         initializeViews();
         setupListeners();
     }
@@ -66,7 +82,6 @@ public class GoalsActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         selectTab(btnGoals);
-        // Load categories and goals every time the screen is shown
         loadCategoriesAndSetupChips();
     }
 
@@ -96,11 +111,43 @@ public class GoalsActivity extends AppCompatActivity {
     }
 
     private void loadCategoriesAndSetupChips() {
-        firestore.collection("goals")
-                .orderBy("category", Query.Direction.ASCENDING)
+        // Load categories from user's personal category collection
+        firestore.collection("userCategories")
+                .document(userId)
                 .get()
-                .addOnCompleteListener(task -> {
+                .addOnSuccessListener(documentSnapshot -> {
+                    Map<String, String> categories = new LinkedHashMap<>();
+                    categories.put("All", "");
 
+                    // Add default categories
+                    categories.put("Mindfulness", "🧘");
+                    categories.put("Sleep", "😴");
+                    categories.put("Journaling", "📔");
+                    categories.put("Fitness", "💪");
+                    categories.put("Gratitude", "🙏");
+
+                    // If user has custom categories, add them
+                    if (documentSnapshot.exists() && documentSnapshot.getData() != null) {
+                        Map<String, Object> customCategories = documentSnapshot.getData();
+                        for (Map.Entry<String, Object> entry : customCategories.entrySet()) {
+                            String categoryName = entry.getKey();
+                            String emoji = entry.getValue().toString();
+
+                            // Don't override default categories
+                            if (!categories.containsKey(categoryName)) {
+                                categories.put(categoryName, emoji);
+                            }
+                        }
+                    }
+
+                    categoryEmojiMap.clear();
+                    categoryEmojiMap.putAll(categories);
+
+                    setupCategoryChips();
+                    loadGoalsFromFirestore();
+                })
+                .addOnFailureListener(e -> {
+                    // If loading fails, just use defaults
                     Map<String, String> categories = new LinkedHashMap<>();
                     categories.put("All", "");
                     categories.put("Mindfulness", "🧘");
@@ -108,17 +155,6 @@ public class GoalsActivity extends AppCompatActivity {
                     categories.put("Journaling", "📔");
                     categories.put("Fitness", "💪");
                     categories.put("Gratitude", "🙏");
-
-                    if (task.isSuccessful() && task.getResult() != null) {
-                        for (QueryDocumentSnapshot doc : task.getResult()) {
-                            String category = doc.getString("category");
-                            String emoji = doc.getString("categoryEmoji");
-
-                            if (category != null && !category.isEmpty()) {
-                                categories.put(category, (emoji != null) ? emoji : "");
-                            }
-                        }
-                    }
 
                     categoryEmojiMap.clear();
                     categoryEmojiMap.putAll(categories);
@@ -189,28 +225,33 @@ public class GoalsActivity extends AppCompatActivity {
 
     private void loadGoalsFromFirestore() {
         loadingProgress.setVisibility(View.VISIBLE);
-        firestore.collection("goals").get().addOnCompleteListener(task -> {
-            loadingProgress.setVisibility(View.GONE);
-            if (task.isSuccessful()) {
-                goalList.clear();
-                for (QueryDocumentSnapshot document : task.getResult()) {
-                    Goal goal = document.toObject(Goal.class);
-                    goal.setGoalId(document.getId());
-                    if (goal.needsReset()) {
-                        goal.setCurrentCount(0);
-                        goal.setCompleted(false);
-                        goal.setLastResetDate(Timestamp.now());
-                        firestore.collection("goals").document(goal.getGoalId()).set(goal);
+
+        // Query only goals belonging to current user
+        firestore.collection("goals")
+                .whereEqualTo("userId", userId)
+                .get()
+                .addOnCompleteListener(task -> {
+                    loadingProgress.setVisibility(View.GONE);
+                    if (task.isSuccessful()) {
+                        goalList.clear();
+                        for (QueryDocumentSnapshot document : task.getResult()) {
+                            Goal goal = document.toObject(Goal.class);
+                            goal.setGoalId(document.getId());
+                            if (goal.needsReset()) {
+                                goal.setCurrentCount(0);
+                                goal.setCompleted(false);
+                                goal.setLastResetDate(Timestamp.now());
+                                firestore.collection("goals").document(goal.getGoalId()).set(goal);
+                            }
+                            goalList.add(goal);
+                        }
+                        filterGoals(selectedCategory);
+                        updateProgress();
+                        updateEmptyState();
+                    } else {
+                        Toast.makeText(this, "Failed to load goals", Toast.LENGTH_SHORT).show();
                     }
-                    goalList.add(goal);
-                }
-                filterGoals(selectedCategory);
-                updateProgress();
-                updateEmptyState();
-            } else {
-                Toast.makeText(this, "Failed to load goals", Toast.LENGTH_SHORT).show();
-            }
-        });
+                });
     }
 
     private void filterGoals(String category) {

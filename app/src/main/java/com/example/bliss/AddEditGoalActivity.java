@@ -19,14 +19,13 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.Timestamp;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeSet;
 
 public class AddEditGoalActivity extends AppCompatActivity {
 
@@ -42,6 +41,8 @@ public class AddEditGoalActivity extends AppCompatActivity {
     private LinearLayout layoutCustomCategory;
 
     private FirebaseFirestore firestore;
+    private FirebaseAuth auth;
+    private String userId;
     private int targetCount = 1;
     private String mode = "add";
     private String editingGoalId = null;
@@ -57,6 +58,16 @@ public class AddEditGoalActivity extends AppCompatActivity {
         setContentView(R.layout.activity_add_edit_goal);
 
         firestore = FirebaseFirestore.getInstance();
+        auth = FirebaseAuth.getInstance();
+
+        // Get current user ID
+        if (auth.getCurrentUser() != null) {
+            userId = auth.getCurrentUser().getUid();
+        } else {
+            Toast.makeText(this, "Please login first", Toast.LENGTH_SHORT).show();
+            finish();
+            return;
+        }
 
         initializeViews();
         loadCategories();
@@ -82,7 +93,7 @@ public class AddEditGoalActivity extends AppCompatActivity {
         loadingProgress = findViewById(R.id.loadingProgress);
         layoutCustomCategory = findViewById(R.id.layoutCustomCategory);
 
-        categoryEmojiMap = getDefaultCategoryEmojis();
+        categoryEmojiMap = new HashMap<>();
         categoryList = new ArrayList<>();
     }
 
@@ -99,29 +110,38 @@ public class AddEditGoalActivity extends AppCompatActivity {
     private void loadCategories() {
         loadingProgress.setVisibility(View.VISIBLE);
 
-        firestore.collection("goals")
+        // Load categories from user's personal category collection
+        firestore.collection("userCategories")
+                .document(userId)
                 .get()
-                .addOnSuccessListener(queryDocumentSnapshots -> {
-                    TreeSet<String> categories = new TreeSet<>();
-                    categories.add("Mindfulness");
-                    categories.add("Sleep");
-                    categories.add("Journaling");
-                    categories.add("Fitness");
-                    categories.add("Gratitude");
+                .addOnSuccessListener(documentSnapshot -> {
+                    categoryList.clear();
+                    categoryEmojiMap.clear();
 
-                    for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
-                        String category = doc.getString("category");
-                        if (category != null && !category.isEmpty()) {
-                            categories.add(category);
+                    // Start with default categories
+                    Map<String, String> defaultCategories = getDefaultCategoryEmojis();
+                    categoryList.addAll(defaultCategories.keySet());
+                    categoryEmojiMap.putAll(defaultCategories);
+
+                    // If user has custom categories, add them
+                    if (documentSnapshot.exists() && documentSnapshot.getData() != null) {
+                        Map<String, Object> customCategories = documentSnapshot.getData();
+                        for (Map.Entry<String, Object> entry : customCategories.entrySet()) {
+                            String categoryName = entry.getKey();
+                            String emoji = entry.getValue().toString();
+
+                            // Don't override default categories
+                            if (!categoryList.contains(categoryName)) {
+                                categoryList.add(categoryName);
+                                categoryEmojiMap.put(categoryName, emoji);
+                            }
                         }
                     }
 
-                    categoryList.clear();
-                    categoryList.addAll(categories);
-                    categoryList.add("Custom a new category..."); // Add this option at the end
+                    // Add option to create custom category at the end
+                    categoryList.add("+ Add New Category");
 
                     setupCategorySpinner();
-                    // If in edit mode, loading the goal data depends on the spinner being ready
                     if ("edit".equals(mode)) {
                         loadGoalData();
                     } else {
@@ -129,14 +149,15 @@ public class AddEditGoalActivity extends AppCompatActivity {
                     }
                 })
                 .addOnFailureListener(e -> {
-                    // If loading fails, just use the defaults
+                    // If loading fails, just use defaults
                     categoryList.clear();
-                    categoryList.add("Mindfulness");
-                    categoryList.add("Sleep");
-                    categoryList.add("Journaling");
-                    categoryList.add("Fitness");
-                    categoryList.add("Gratitude");
-                    categoryList.add("Custom a new category...");
+                    categoryEmojiMap.clear();
+
+                    Map<String, String> defaultCategories = getDefaultCategoryEmojis();
+                    categoryList.addAll(defaultCategories.keySet());
+                    categoryEmojiMap.putAll(defaultCategories);
+                    categoryList.add("+ Add New Category");
+
                     setupCategorySpinner();
                     loadingProgress.setVisibility(View.GONE);
                 });
@@ -155,7 +176,7 @@ public class AddEditGoalActivity extends AppCompatActivity {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 String selected = categoryList.get(position);
-                if (selected.equals("Custom a new category...")) {
+                if (selected.equals("+ Add New Category")) {
                     layoutCustomCategory.setVisibility(View.VISIBLE);
                     isCustomCategorySelected = true;
                 } else {
@@ -218,21 +239,28 @@ public class AddEditGoalActivity extends AppCompatActivity {
                     if (documentSnapshot.exists()) {
                         goalToEdit = documentSnapshot.toObject(Goal.class);
                         if (goalToEdit != null) {
+                            // Verify that this goal belongs to the current user
+                            if (!userId.equals(goalToEdit.getUserId())) {
+                                Toast.makeText(this, "Unauthorized access", Toast.LENGTH_SHORT).show();
+                                finish();
+                                return;
+                            }
+
                             etGoalTitle.setText(goalToEdit.getTitle());
 
-                            // Set category spinner
                             String category = goalToEdit.getCategory();
                             int categoryIndex = categoryList.indexOf(category);
-                            if (categoryIndex != -1) {
+                            if (categoryIndex != -1 && categoryIndex < categoryList.size() - 1) {
+                                // Category exists in the list (and it's not the "+ Add New Category" option)
                                 spinnerCategory.setSelection(categoryIndex);
                             } else {
-                                // If category not in list, it must be a custom one we need to show
-                                spinnerCategory.setSelection(categoryList.indexOf("Custom a new category..."));
+                                // Category doesn't exist - it might be a custom one that was added
+                                // Show it in custom fields
+                                spinnerCategory.setSelection(categoryList.indexOf("+ Add New Category"));
                                 etCustomCategory.setText(category);
                                 etCustomEmoji.setText(goalToEdit.getCategoryEmoji());
                             }
 
-                            // Set goal type
                             if ("Daily".equals(goalToEdit.getGoalType())) {
                                 rbDaily.setChecked(true);
                             } else {
@@ -291,17 +319,14 @@ public class AddEditGoalActivity extends AppCompatActivity {
                 etCustomEmoji.requestFocus();
                 return;
             }
+
+            // Save the new custom category to user's categories
+            saveCustomCategory(category, emoji);
         } else {
             category = spinnerCategory.getSelectedItem().toString();
-            if (getDefaultCategoryEmojis().containsKey(category)) {
-                emoji = categoryEmojiMap.get(category);
-            } else {
-                // It's a pre-existing custom category, so preserve its original emoji.
-                if (goalToEdit != null) {
-                    emoji = goalToEdit.getCategoryEmoji();
-                } else {
-                    emoji = "📌"; // Fallback, should not happen in edit mode
-                }
+            emoji = categoryEmojiMap.get(category);
+            if (emoji == null || emoji.isEmpty()) {
+                emoji = "📌"; // Fallback
             }
         }
 
@@ -317,20 +342,37 @@ public class AddEditGoalActivity extends AppCompatActivity {
         }
     }
 
+    private void saveCustomCategory(String category, String emoji) {
+        // Save custom category to user's category collection
+        Map<String, Object> categoryData = new HashMap<>();
+        categoryData.put(category, emoji);
+
+        firestore.collection("userCategories")
+                .document(userId)
+                .set(categoryData, com.google.firebase.firestore.SetOptions.merge())
+                .addOnSuccessListener(aVoid -> {
+                    // Category saved successfully
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(this, "Failed to save category", Toast.LENGTH_SHORT).show();
+                });
+    }
+
     private void createNewGoal(String title, String category, String emoji, String goalType) {
         String newGoalId = firestore.collection("goals").document().getId();
 
         Goal goal = new Goal(
                 newGoalId,
+                userId, // Set the userId
                 title,
                 category,
                 emoji,
                 goalType,
                 targetCount,
-                0, // currentCount starts at 0
-                Timestamp.now(), // lastResetDate
-                false, // isCompleted
-                Timestamp.now() // createdAt
+                0,
+                Timestamp.now(),
+                false,
+                Timestamp.now()
         );
 
         firestore.collection("goals").document(newGoalId)
@@ -353,12 +395,18 @@ public class AddEditGoalActivity extends AppCompatActivity {
                     if (documentSnapshot.exists()) {
                         Goal existingGoal = documentSnapshot.toObject(Goal.class);
                         if (existingGoal != null) {
+                            // Verify ownership
+                            if (!userId.equals(existingGoal.getUserId())) {
+                                Toast.makeText(this, "Unauthorized access", Toast.LENGTH_SHORT).show();
+                                finish();
+                                return;
+                            }
+
                             existingGoal.setTitle(title);
                             existingGoal.setCategory(category);
                             existingGoal.setCategoryEmoji(emoji);
                             existingGoal.setGoalType(goalType);
                             existingGoal.setTargetCount(targetCount);
-                            // Only update completion status, don't reset progress
                             existingGoal.setCompleted(existingGoal.getCurrentCount() >= targetCount);
 
                             firestore.collection("goals").document(editingGoalId)
