@@ -15,6 +15,7 @@ local.properties
 
 # Android Studio / IntelliJ
 .idea/
+.idea_backup/
 *.iml
 
 # Gradle files
@@ -36,4 +37,5 @@ local.properties
 
 # Firebase
 app/google-services.json
+
 
