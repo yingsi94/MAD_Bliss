@@ -67,11 +67,6 @@ public class ProfileActivity extends AppCompatActivity {
                                 .placeholder(R.mipmap.ic_launcher) // Optional — default image
                                 .into(profilePicture);
                     }
-
-                    // Automatically navigate to TrackMoodActivity
-                    Intent intent = new Intent(ProfileActivity.this, TrackMoodActivity.class);
-                    startActivity(intent);
-                    finish(); // Finish ProfileActivity to prevent user from returning
                 }
             }
         });
