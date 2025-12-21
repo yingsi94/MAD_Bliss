@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- res/drawable/progress_bar_gradient.xml -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- Background (unfilled portion) -->
+    <item android:id="@android:id/background">
+        <shape android:shape="rectangle">
+            <corners android:radius="4dp" />
+            <solid android:color="#E0E0E0" />
+        </shape>
+    </item>
+
+    <!-- Progress (filled portion) -->
+    <item android:id="@android:id/progress">
+        <clip>
+            <shape android:shape="rectangle">
+                <corners android:radius="4dp" />
+                <gradient
+                    android:type="linear"
+                    android:angle="0"
+                    android:startColor="#8A2BE2"
+                    android:endColor="#E91E63" />
+            </shape>
+        </clip>
+    </item>
+
+</layer-list>

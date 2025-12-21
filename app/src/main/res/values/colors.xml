@@ -12,4 +12,9 @@
     <color name="mood_angry">#FFCDD2</color>
     <color name="mood_anxious">#E1BEE7</color>
     <color name="mood_neutral">#E0E0E0</color>
+    <color name="purple_primary">#A855F7</color>
+    <color name="purple_light">#E9D5FF</color>
+    <color name="gray_background">#F5F5F5</color>
+    <color name="gray_text">#666666</color>
+    <color name="purple_dark">#4A148C</color>
 </resources>
