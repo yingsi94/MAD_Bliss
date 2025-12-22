@@ -20,5 +20,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "Weekly Summary"
+rootProject.name = "Bliss"
 include(":app")
