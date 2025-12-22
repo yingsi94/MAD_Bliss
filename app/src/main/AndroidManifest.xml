@@ -1,14 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <!--STORAGE-->
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-
-    <!--INTERNET ACCESS-->
     <uses-permission android:name="android.permission.INTERNET"/>
-
 
     <application
         android:allowBackup="true"
@@ -19,18 +14,21 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Bliss">
-        <activity android:name=".ChangePasswordActivity"/>
-        <activity android:name=".EditProfileActivity" />
-        <activity android:name=".ForgotPasswordActivity"/>
-        <activity android:name=".SignUpActivity"/>
-        <activity android:name=".ProfileActivity"/>
+
         <activity
-            android:name=".LoginActivity"
+            android:name="com.example.main.MainActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustPan"/>
+
+        <activity android:name="com.example.login_signup_profile.ForgotPasswordActivity"/>
+        <activity android:name="com.example.login_signup_profile.SignUpActivity"/>
+
+        <activity
+            android:name="com.example.login_signup_profile.LoginActivity"
             android:exported="true"
             android:launchMode="singleTask">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -40,5 +38,4 @@
             android:value="cloudinary://847458557797165:VoH55kkWxVHl7D4FjqPhP6AQHVo@ddzraiu5y"/>
 
     </application>
-
 </manifest>
