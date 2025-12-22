@@ -6,33 +6,29 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
 import android.util.AttributeSet;
+import android.view.MotionEvent;
 import android.view.View;
-
 import androidx.annotation.NonNull;
-
 import java.util.ArrayList;
 import java.util.List;
 
 public class DonutPieChart extends View {
-
-    private Paint slicePaint;
-    private Paint centerPaint;
-    private Paint textPaint;
+    private Paint slicePaint, centerPaint, textPaint, subTextPaint;
     private List<Segment> segments = new ArrayList<>();
     private float totalValue = 0;
+    private int selectedIndex = -1; // 记录点击的扇形索引
 
-    // Simple data holder
     public static class Segment {
-        float value;
-        int color;
-        String label;
-        // Scale factor: 1.0 = big (purple), 0.9 = medium (red), 0.8 = small
-        float scale;
+        public float value;
+        public int color;
+        public float scale;
+        public String label;
 
-        public Segment(float value, String colorHex, float scale) {
+        public Segment(float value, String colorHex, float scale, String label) {
             this.value = value;
             this.color = Color.parseColor(colorHex);
             this.scale = scale;
+            this.label = label;
         }
     }
 
@@ -42,76 +38,93 @@ public class DonutPieChart extends View {
     }
 
     private void init() {
-        // 1. Paint for the slices
-        slicePaint = new Paint();
-        slicePaint.setAntiAlias(true);
+        slicePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         slicePaint.setStyle(Paint.Style.FILL);
 
-        // 2. Paint for the white hole
-        centerPaint = new Paint();
+        centerPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         centerPaint.setColor(Color.WHITE);
-        centerPaint.setAntiAlias(true);
 
-        // 3. Paint for the text
-        textPaint = new Paint();
-        textPaint.setColor(Color.DKGRAY);
-        textPaint.setTextSize(60f);
+        textPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        textPaint.setColor(Color.parseColor("#1F2937"));
+        textPaint.setTextSize(90f);
         textPaint.setFakeBoldText(true);
         textPaint.setTextAlign(Paint.Align.CENTER);
-        textPaint.setAntiAlias(true);
+
+        subTextPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        subTextPaint.setColor(Color.GRAY);
+        subTextPaint.setTextSize(35f);
+        subTextPaint.setTextAlign(Paint.Align.CENTER);
     }
 
     public void setSegments(List<Segment> data) {
         this.segments = data;
         this.totalValue = 0;
+        this.selectedIndex = -1;
         for (Segment s : data) totalValue += s.value;
-        invalidate(); // Redraw the view
+        invalidate();
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        if (event.getAction() == MotionEvent.ACTION_DOWN && totalValue > 0) {
+            float x = event.getX() - getWidth() / 2f;
+            float y = event.getY() - getHeight() / 2f;
+            double angle = Math.toDegrees(Math.atan2(y, x));
+            if (angle < 0) angle += 360;
+            float adjustedAngle = (float) ((angle + 90) % 360);
+
+            float tempAngle = 0;
+            for (int i = 0; i < segments.size(); i++) {
+                float sweep = (segments.get(i).value / totalValue) * 360f;
+                if (adjustedAngle >= tempAngle && adjustedAngle <= tempAngle + sweep) {
+                    selectedIndex = (selectedIndex == i) ? -1 : i; // 再次点击取消选中
+                    invalidate();
+                    return true;
+                }
+                tempAngle += sweep;
+            }
+        }
+        return super.onTouchEvent(event);
     }
 
     @Override
     protected void onDraw(@NonNull Canvas canvas) {
         super.onDraw(canvas);
-        if (segments.isEmpty()) return;
+        float centerX = getWidth() / 2f;
+        float centerY = getHeight() / 2f;
+        float baseRadius = Math.min(centerX, centerY) * 0.85f;
 
-        int width = getWidth();
-        int height = getHeight();
-        int minDim = Math.min(width, height);
-
-        // Center coordinates
-        float centerX = width / 2f;
-        float centerY = height / 2f;
-
-        // Base radius (leave padding)
-        float maxRadius = (minDim / 2f) * 0.9f;
-
-        float currentAngle = 270; // Start at top (12 o'clock)
-
-        // DRAW SLICES
-        for (Segment s : segments) {
-            float sweepAngle = (s.value / totalValue) * 360f;
-
-            // Adjust radius based on the 'scale' property to create the stepped look
-            float currentRadius = maxRadius * s.scale;
-
-            RectF bounds = new RectF(
-                    centerX - currentRadius, centerY - currentRadius,
-                    centerX + currentRadius, centerY + currentRadius
-            );
-
-            slicePaint.setColor(s.color);
-            // useCenter=true makes it a pie slice (wedges), not just an arc line
-            canvas.drawArc(bounds, currentAngle, sweepAngle, true, slicePaint);
-
-            currentAngle += sweepAngle;
+        if (segments.isEmpty() || totalValue == 0) {
+            slicePaint.setColor(Color.parseColor("#E5E7EB"));
+            canvas.drawCircle(centerX, centerY, baseRadius, slicePaint);
+            drawCenter(canvas, centerX, centerY, baseRadius, "0", "Total");
+            return;
         }
 
-        // DRAW CENTER HOLE (To make it a donut)
-        float holeRadius = maxRadius * 0.45f; // Hole is 45% of size
-        canvas.drawCircle(centerX, centerY, holeRadius, centerPaint);
+        float currentAngle = 270f;
+        for (int i = 0; i < segments.size(); i++) {
+            Segment s = segments.get(i);
+            float sweep = (s.value / totalValue) * 360f;
+            float radius = baseRadius * s.scale;
+            RectF rect = new RectF(centerX - radius, centerY - radius, centerX + radius, centerY + radius);
+            slicePaint.setColor(s.color);
+            canvas.drawArc(rect, currentAngle, sweep, true, slicePaint);
+            currentAngle += sweep;
+        }
 
-        // DRAW CENTER TEXT
-        // Calculate vertical centering
-        float textHeightOffset = (textPaint.descent() + textPaint.ascent()) / 2;
-        canvas.drawText("100", centerX, centerY - textHeightOffset, textPaint);
+        if (selectedIndex != -1) {
+            Segment s = segments.get(selectedIndex);
+            int percent = Math.round((s.value / totalValue) * 100);
+            drawCenter(canvas, centerX, centerY, baseRadius, percent + "%", s.label);
+        } else {
+            drawCenter(canvas, centerX, centerY, baseRadius, String.valueOf((int)totalValue), "Total");
+        }
+    }
+
+    private void drawCenter(Canvas canvas, float cx, float cy, float rad, String main, String sub) {
+        canvas.drawCircle(cx, cy, rad * 0.5f, centerPaint);
+        float offset = (textPaint.descent() + textPaint.ascent()) / 2;
+        canvas.drawText(main, cx, cy - offset - 15, textPaint);
+        canvas.drawText(sub, cx, cy - offset + 45, subTextPaint);
     }
 }
