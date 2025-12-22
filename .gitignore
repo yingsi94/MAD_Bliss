@@ -1,17 +1,46 @@
-*.iml
-.gradle
-/local.properties
-/.idea/caches
-/.idea/libraries
-/.idea/modules.xml
-/.idea/workspace.xml
-/.idea/navEditor.xml
-/.idea/assetWizardSettings.xml
-.DS_Store
-/build
-/captures
-.externalNativeBuild
-.cxx
-local.properties
-.env
-.idea/
+    # ===============================================
+    # A clean and correct .gitignore for Android
+    # ===============================================
+
+    # Built application files
+    /build
+    /app/build
+
+    # Local configuration file (contains SDK path, etc.)
+    # This file should be unique to each machine.
+    /local.properties
+    local.properties
+
+    # Log files
+    *.log
+
+    # Android Studio/IntelliJ files
+    # The .idea directory contains local workspace settings.
+    .idea/
+    .idea
+
+    # Gradle files
+    .gradle
+    .gradle/
+    !/gradle/wrapper/gradle-wrapper.jar
+    !/gradle/wrapper/gradle-wrapper.properties
+    !/gradlew
+    !/gradlew.bat
+
+    # Keystore files (NEVER commit your signing keys)
+    *.jks
+    *.keystore
+
+    # Other generated files
+    .DS_Store
+    /captures
+    .externalNativeBuild
+    .cxx
+
+    #Firebase
+    google-services.json
+
+    #Generated APK / AAB
+    *.apk
+    *.aab
+
