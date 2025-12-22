@@ -37,7 +37,6 @@ public class WeeklySummary extends AppCompatActivity {
             return insets;
         });
 
-
         // 1. Find the Chart
         BarChart barChart = findViewById(R.id.barChart);
 
