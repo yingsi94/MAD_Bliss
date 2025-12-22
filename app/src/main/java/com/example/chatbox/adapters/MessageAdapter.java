@@ -8,58 +8,80 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-
-import com.example.chatbox.R;
+import com.example.bliss.R;
 import com.example.chatbox.models.Message;
-
 import java.util.List;
 
-public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageViewHolder> {
+public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+    private static final int TYPE_ME = 1;
+    private static final int TYPE_AI = 2;
 
     private Context context;
     private List<Message> messageList;
 
-    // Constructor: Pass in the list of messages
     public MessageAdapter(Context context, List<Message> messageList) {
         this.context = context;
         this.messageList = messageList;
     }
 
-    // 1. Create the view (inflate item_message.xml)
+    @Override
+    public int getItemViewType(int position) {
+        // If the sender is "Me", show the right bubble
+        return messageList.get(position).getSender().equalsIgnoreCase("Me") ? TYPE_ME : TYPE_AI;
+    }
+
     @NonNull
     @Override
-    public MessageViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(context).inflate(R.layout.item_message, parent, false);
-        return new MessageViewHolder(view);
+    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        if (viewType == TYPE_ME) {
+            View v = LayoutInflater.from(context).inflate(R.layout.item_chat_me, parent, false);
+            return new SentViewHolder(v);
+        } else {
+            View v = LayoutInflater.from(context).inflate(R.layout.item_chat_ai, parent, false);
+            return new ReceivedViewHolder(v);
+        }
     }
 
-    // 2. Bind the data (take data from list, put it on screen)
     @Override
-    public void onBindViewHolder(@NonNull MessageViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         Message message = messageList.get(position);
-
-        holder.textMessage.setText(message.getMessage());
-        holder.textSender.setText(message.getSender());
-        // Simple timestamp for demo. In real app, format the long 'createdAt' to a date string.
-        holder.textTimestamp.setText(String.valueOf(message.getCreatedAt()));
+        if (holder instanceof SentViewHolder) {
+            ((SentViewHolder) holder).bind(message);
+        } else {
+            ((ReceivedViewHolder) holder).bind(message);
+        }
     }
 
-    // 3. How many items do we have?
     @Override
-    public int getItemCount() {
-        return messageList.size();
+    public int getItemCount() { return messageList.size(); }
+
+    // ViewHolder for messages sent by the user
+    static class SentViewHolder extends RecyclerView.ViewHolder {
+        TextView msg, time;
+        SentViewHolder(View v) {
+            super(v);
+            msg = v.findViewById(R.id.text_chat_message_me);
+            time = v.findViewById(R.id.text_chat_timestamp_me);
+        }
+        void bind(Message m) {
+            msg.setText(m.getMessage());
+            time.setText(m.getFormattedTime());
+        }
     }
 
-    // Inner Class: Defines the View Components
-    public class MessageViewHolder extends RecyclerView.ViewHolder {
-        TextView textMessage, textSender, textTimestamp;
-
-        public MessageViewHolder(@NonNull View itemView) {
-            super(itemView);
-            // Link the Java variables to the XML IDs here
-            textMessage = itemView.findViewById(R.id.text_gchat_message);
-            textSender = itemView.findViewById(R.id.text_gchat_user);
-            textTimestamp = itemView.findViewById(R.id.text_gchat_timestamp);
+    // ViewHolder for messages received from the AI
+    static class ReceivedViewHolder extends RecyclerView.ViewHolder {
+        TextView msg, time, user;
+        ReceivedViewHolder(View v) {
+            super(v);
+            msg = v.findViewById(R.id.text_chat_message_ai);
+            time = v.findViewById(R.id.text_chat_timestamp_ai);
+            user = v.findViewById(R.id.text_chat_user_ai);
+        }
+        void bind(Message m) {
+            msg.setText(m.getMessage());
+            time.setText(m.getFormattedTime());
+            user.setText(m.getSender());
         }
     }
 }
