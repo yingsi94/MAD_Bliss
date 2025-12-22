@@ -27,7 +27,6 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
-        // From INCOMING BRANCH
         buildConfigField(
             "String",
             "GOOGLE_API_KEY",
@@ -50,7 +49,6 @@ android {
         }
     }
     compileOptions {
-
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
@@ -60,9 +58,6 @@ android {
 }
 
 dependencies {
-    // Add this line to your dependencies
-    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.3")
-
     // Core UI
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
@@ -93,8 +88,7 @@ dependencies {
     implementation(libs.firebase.auth)
     implementation(libs.firebase.firestore)
     implementation(libs.firebase.storage)
-    implementation("com.google.firebase:firebase-firestore-ktx")
-    implementation("com.google.firebase:firebase-storage")
+
 
     // Additional from incoming branch
     implementation(libs.firebase.analytics)
@@ -106,8 +100,6 @@ dependencies {
     implementation("com.cloudinary:cloudinary-android:3.1.2") // your version
 
     // Tests
-    implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
-    implementation("com.github.AnyChart:AnyChart-Android:1.1.5")
     implementation("androidx.recyclerview:recyclerview:1.3.0")
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
@@ -118,5 +110,4 @@ dependencies {
     androidTestImplementation(libs.ui.test.junit4)
     debugImplementation(libs.ui.tooling)
     debugImplementation(libs.ui.test.manifest)
-
 }
