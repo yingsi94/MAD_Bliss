@@ -49,6 +49,7 @@ android {
         }
     }
     compileOptions {
+
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
@@ -58,6 +59,9 @@ android {
 }
 
 dependencies {
+    // Add this line to your dependencies
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.3")
+
     // Core UI
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
@@ -110,4 +114,5 @@ dependencies {
     androidTestImplementation(libs.ui.test.junit4)
     debugImplementation(libs.ui.tooling)
     debugImplementation(libs.ui.test.manifest)
+
 }

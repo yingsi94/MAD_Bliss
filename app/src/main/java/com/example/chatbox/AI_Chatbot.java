@@ -57,7 +57,7 @@ public class AI_Chatbot extends AppCompatActivity {
             welcomeSection.setVisibility(View.GONE);
 
             // 1. Add User Message
-            addMessage(new Message(text, "Me", LocalTime.now()));
+            addMessage(new Message(text, "Me", System.currentTimeMillis()));
             editMessage.setText("");
 
             // 2. Call API for AI Response
@@ -65,12 +65,12 @@ public class AI_Chatbot extends AppCompatActivity {
                 @Override
                 public void onResponse(Call<MyResponse> call, Response<MyResponse> response) {
                     if (response.isSuccessful() && response.body() != null) {
-                        addMessage(new Message(response.body().getMessage(), "BlissMate", LocalTime.now()));
+                        addMessage(new Message(response.body().getMessage(), "BlissMate", System.currentTimeMillis()));
                     }
                 }
                 @Override
                 public void onFailure(Call<MyResponse> call, Throwable t) {
-                    addMessage(new Message("Connection Error: " + t.getMessage(), "Agent", LocalTime.now()));
+                    addMessage(new Message("Connection Error", "Agent", System.currentTimeMillis()));
                 }
             });
         });
