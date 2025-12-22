@@ -93,6 +93,7 @@ dependencies {
     implementation("com.cloudinary:cloudinary-android:3.1.2") // your version
 
     // Tests
+    implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
