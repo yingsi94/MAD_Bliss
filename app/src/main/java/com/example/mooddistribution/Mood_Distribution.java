@@ -1,67 +1,95 @@
 package com.example.mooddistribution;
 
-
 import android.os.Bundle;
-
-
-import androidx.activity.EdgeToEdge;
+import android.widget.ImageView;
+import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
-
-import com.anychart.AnyChart;
-import com.anychart.AnyChartView;
-import com.anychart.chart.common.dataentry.DataEntry;
-import com.anychart.chart.common.dataentry.ValueDataEntry;
-import com.anychart.charts.Pie;
-
-
-import java.util.ArrayList;
-import java.util.List;
-
+import com.example.bliss.R;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 public class Mood_Distribution extends AppCompatActivity {
-
+    private DonutPieChart donutChart;
+    private TextView tvDateRange;
+    private FirebaseFirestore db;
+    private Calendar displayCalendar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
         setContentView(R.layout.activity_mood_distribution);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });
-        DonutPieChart chart = findViewById(R.id.donutChart);
 
+        db = FirebaseFirestore.getInstance();
+        displayCalendar = Calendar.getInstance();
+        displayCalendar.setFirstDayOfWeek(Calendar.MONDAY);
 
-        List<DonutPieChart.Segment> data = new ArrayList<>();
+        donutChart = findViewById(R.id.donutChart);
+        tvDateRange = findViewById(R.id.tvDateRange);
 
+        findViewById(R.id.btnPrevWeek).setOnClickListener(v -> shiftWeek(-1));
+        findViewById(R.id.btnNextWeek).setOnClickListener(v -> shiftWeek(1));
+        findViewById(R.id.tabWeeklySummary).setOnClickListener(v -> finish());
 
-        // Scale 1.0 = Purple (Largest)
-        // Scale 0.9 = Red (Medium)
-        // Scale 0.8 = Orange/Teal (Smallest)
+        loadDistributionData();
+    }
 
+    private void shiftWeek(int delta) {
+        displayCalendar.add(Calendar.WEEK_OF_YEAR, delta);
+        loadDistributionData();
+    }
 
-        // Purple Slice (~45%)
-        data.add(new DonutPieChart.Segment(45, "#7B61FF", 1.0f));
+    private void loadDistributionData() {
+        Calendar cal = (Calendar) displayCalendar.clone();
+        cal.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
+        cal.set(Calendar.HOUR_OF_DAY, 0); cal.set(Calendar.MINUTE, 0); cal.set(Calendar.SECOND, 0);
+        long start = cal.getTimeInMillis();
 
+        cal.add(Calendar.DAY_OF_WEEK, 6);
+        cal.set(Calendar.HOUR_OF_DAY, 23); cal.set(Calendar.MINUTE, 59); cal.set(Calendar.SECOND, 59);
+        long end = cal.getTimeInMillis();
 
-        // Orange Slice (~10%)
-        data.add(new DonutPieChart.Segment(10, "#FFB74D", 0.8f));
+        SimpleDateFormat sdf = new SimpleDateFormat("MMM dd", Locale.getDefault());
+        tvDateRange.setText(sdf.format(new Date(start)) + " - " + sdf.format(new Date(end)));
 
+        String uid = FirebaseAuth.getInstance().getUid();
+        if (uid == null) return;
 
-        // Teal Slice (~10%)
-        data.add(new DonutPieChart.Segment(10, "#4DD0E1", 0.8f));
+        db.collection("users").document(uid).collection("mood_history")
+                .whereGreaterThanOrEqualTo("time_millis", start)
+                .whereLessThanOrEqualTo("time_millis", end)
+                .get()
+                .addOnSuccessListener(snapshots -> {
+                    Map<String, Integer> counts = new HashMap<>();
+                    int total = 0;
+                    for (QueryDocumentSnapshot doc : snapshots) {
+                        String mood = doc.getString("mood");
+                        if (mood != null) {
+                            counts.put(mood.toLowerCase(), counts.getOrDefault(mood.toLowerCase(), 0) + 1);
+                            total++;
+                        }
+                    }
+                    updateChart(counts, total);
+                });
+    }
 
+    private void updateChart(Map<String, Integer> counts, int total) {
+        List<DonutPieChart.Segment> segments = new ArrayList<>();
+        if (total > 0) {
+            addIf(segments, counts, "happy", "#8979FF", 1.0f, "Happy");
+            addIf(segments, counts, "calm", "#FF928A", 0.9f, "Calm");
+            addIf(segments, counts, "sad", "#3CC3DF", 0.85f, "Sad");
+            addIf(segments, counts, "stressed", "#FFAE4C", 0.8f, "Stressed");
+        }
+        donutChart.setSegments(segments);
+    }
 
-        // Red Slice (~35%)
-        data.add(new DonutPieChart.Segment(35, "#FF6B6B", 0.9f));
-
-
-        chart.setSegments(data);
+    private void addIf(List<DonutPieChart.Segment> list, Map<String, Integer> counts, String key, String color, float scale, String label) {
+        if (counts.getOrDefault(key, 0) > 0) {
+            list.add(new DonutPieChart.Segment(counts.get(key), color, scale, label));
+        }
     }
 }
