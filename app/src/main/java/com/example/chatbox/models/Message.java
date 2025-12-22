@@ -1,15 +1,16 @@
 package com.example.chatbox.models;
 
 import java.io.Serializable;
-import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 public class Message implements Serializable {
     private String message;
     private String sender;
-    private LocalTime createdAt;
+    private long createdAt; // Changed from LocalTime to long
 
-    public Message(String message, String sender, LocalTime createdAt) {
+    public Message(String message, String sender, long createdAt) {
         this.message = message;
         this.sender = sender;
         this.createdAt = createdAt;
@@ -18,9 +19,9 @@ public class Message implements Serializable {
     public String getMessage() { return message; }
     public String getSender() { return sender; }
 
-    // Formats the time to a clean "HH:mm" string for the UI
+    // Formats the long timestamp to "HH:mm" (e.g., 21:15)
     public String getFormattedTime() {
-        if (createdAt == null) return "";
-        return createdAt.format(DateTimeFormatter.ofPattern("HH:mm"));
+        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm", Locale.getDefault());
+        return sdf.format(new Date(createdAt));
     }
 }
