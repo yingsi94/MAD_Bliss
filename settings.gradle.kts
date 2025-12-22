@@ -20,6 +20,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "Mood Distribution"
+rootProject.name = "Bliss"
 include(":app")
  
