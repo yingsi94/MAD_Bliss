@@ -201,14 +201,20 @@ public class RelaxationFragment extends Fragment {
     }
 
     private void setupListeners() {
+        // 1. 跳转到呼吸训练 (BreathingFragment)
         btnBreathing.setOnClickListener(v -> {
-            Intent intent = new Intent(getActivity(), BreathingFragment.class);
-            startActivity(intent);
+            getParentFragmentManager().beginTransaction()
+                    .replace(R.id.fragment_container, new BreathingFragment()) // 替换为呼吸页面
+                    .addToBackStack(null) // 重要：这样按返回键能回到 Relaxation 选择页
+                    .commit();
         });
 
+        // 2. 跳转到目标页面 (GoalsFragment)
         btnGoals.setOnClickListener(v -> {
-            Intent intent = new Intent(getActivity(), GoalsFragment.class);
-            startActivity(intent);
+            getParentFragmentManager().beginTransaction()
+                    .replace(R.id.fragment_container, new GoalsFragment()) // 替换为目标页面
+                    .addToBackStack(null) // 重要
+                    .commit();
         });
 
         rbNoMusic.setOnCheckedChangeListener((buttonView, isChecked) -> {

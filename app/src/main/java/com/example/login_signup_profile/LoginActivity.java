@@ -12,7 +12,8 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.bliss.R;
-import com.example.relaxation.RelaxationFragment;
+// 导入 MainActivity
+import com.example.main.MainActivity;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.textfield.TextInputEditText;
@@ -47,43 +48,41 @@ public class LoginActivity extends AppCompatActivity {
 
                 if (!email.isEmpty() && Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
                     if(!password.isEmpty()){
-                        auth.signInWithEmailAndPassword(email,password).addOnSuccessListener(new OnSuccessListener<AuthResult>() {
-                            @Override
-                            public void onSuccess(AuthResult authResult)  {
-                                Toast.makeText(LoginActivity.this,"Login Successful", Toast.LENGTH_SHORT).show();
-                                startActivity(new Intent(LoginActivity.this, RelaxationFragment.class));
-                                finish();
-                            }
-                        }).addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                                Toast.makeText(LoginActivity.this,"Login Failed", Toast.LENGTH_SHORT).show();
-                            }
-                        });
-                    }else{
+                        auth.signInWithEmailAndPassword(email,password)
+                                .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
+                                    @Override
+                                    public void onSuccess(AuthResult authResult)  {
+                                        Toast.makeText(LoginActivity.this,"Login Successful", Toast.LENGTH_SHORT).show();
+
+                                        // --- 修改后的跳转逻辑 ---
+                                        // 跳转到 MainActivity，而不是 Fragment
+                                        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                                        // 清空栈，防止返回键回到登录界面
+                                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                        startActivity(intent);
+                                        finish(); // 销毁当前的登录页面
+                                    }
+                                }).addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
+                                        Toast.makeText(LoginActivity.this, "Login Failed: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+                    } else {
                         etPassword.setError("Password required");
                     }
-                }else if (email.isEmpty()) {
+                } else if (email.isEmpty()) {
                     etEmail.setError("Email required");
-                } else{
+                } else {
                     etEmail.setError("Invalid Email");
                 }
-
             }
         });
 
-        tvForgotPassword.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startActivity(new Intent(LoginActivity.this, ForgotPasswordActivity.class));
-            }
-        });
+        tvForgotPassword.setOnClickListener(view ->
+                startActivity(new Intent(LoginActivity.this, ForgotPasswordActivity.class)));
 
-        tvSignUp.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startActivity(new Intent(LoginActivity.this, SignUpActivity.class));
-            }
-        });
+        tvSignUp.setOnClickListener(view ->
+                startActivity(new Intent(LoginActivity.this, SignUpActivity.class)));
     }
 }
