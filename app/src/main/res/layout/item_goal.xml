@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="12dp"
+    app:cardCornerRadius="12dp"
+    app:cardElevation="2dp"
+    app:cardBackgroundColor="#FFFFFF">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <!-- Top Row: Mark as Done Button, Title, Menu -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="8dp">
+
+            <Button
+                android:id="@+id/btnMarkDone"
+                android:layout_width="wrap_content"
+                android:layout_height="36dp"
+                android:text="Mark as Done"
+                android:textSize="11sp"
+                android:textColor="#FFFFFF"
+                android:background="@drawable/button_mark_done"
+                android:textAllCaps="false"
+                android:paddingHorizontal="12dp"
+                android:layout_marginEnd="12dp"
+                android:minWidth="0dp"/>
+
+            <TextView
+                android:id="@+id/tvGoalText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Meditate for 10 minutes daily"
+                android:textSize="16sp"
+                android:textColor="#000000"
+                android:textStyle="bold"/>
+
+            <ImageButton
+                android:id="@+id/btnMenu"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:src="@drawable/ic_more_vert"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="Menu"
+                app:tint="#666666"/>
+        </LinearLayout>
+
+        <!-- Category Chip -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/category_chip_bg"
+            android:paddingHorizontal="12dp"
+            android:paddingVertical="6dp"
+            android:layout_marginBottom="12dp">
+
+            <TextView
+                android:id="@+id/tvCategory"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="🧘 Mindfulness"
+                android:textSize="12sp"
+                android:textColor="#7B2CBF"
+                android:textStyle="bold"/>
+        </LinearLayout>
+
+        <!-- Goal Type and Progress -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="8dp">
+
+            <TextView
+                android:id="@+id/tvGoalType"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Daily"
+                android:textSize="12sp"
+                android:textColor="#666666"
+                android:background="@drawable/type_badge_bg"
+                android:paddingHorizontal="8dp"
+                android:paddingVertical="4dp"
+                android:layout_marginEnd="12dp"/>
+
+            <TextView
+                android:id="@+id/tvProgress"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Progress: 1 / 1"
+                android:textSize="13sp"
+                android:textColor="#666666"/>
+
+            <TextView
+                android:id="@+id/tvProgressPercentage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="100%"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:textColor="#4CAF50"/>
+        </LinearLayout>
+
+        <!-- Progress Bar -->
+        <ProgressBar
+            android:id="@+id/progressBarGoal"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="match_parent"
+            android:layout_height="6dp"
+            android:progress="100"
+            android:max="100"
+            android:progressDrawable="@drawable/progress_bar_goal"/>
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>
