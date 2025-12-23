@@ -16,7 +16,7 @@ public class DonutPieChart extends View {
     private Paint slicePaint, centerPaint, textPaint, subTextPaint;
     private List<Segment> segments = new ArrayList<>();
     private float totalValue = 0;
-    private int selectedIndex = -1; // 记录点击的扇形索引
+    private int selectedIndex = -1;
 
     public static class Segment {
         public float value;
@@ -77,7 +77,7 @@ public class DonutPieChart extends View {
             for (int i = 0; i < segments.size(); i++) {
                 float sweep = (segments.get(i).value / totalValue) * 360f;
                 if (adjustedAngle >= tempAngle && adjustedAngle <= tempAngle + sweep) {
-                    selectedIndex = (selectedIndex == i) ? -1 : i; // 再次点击取消选中
+                    selectedIndex = (selectedIndex == i) ? -1 : i;
                     invalidate();
                     return true;
                 }
@@ -94,18 +94,16 @@ public class DonutPieChart extends View {
         float centerY = getHeight() / 2f;
         float baseRadius = Math.min(centerX, centerY) * 0.85f;
 
-        if (segments.isEmpty() || totalValue == 0) {
-            slicePaint.setColor(Color.parseColor("#E5E7EB"));
-            canvas.drawCircle(centerX, centerY, baseRadius, slicePaint);
-            drawCenter(canvas, centerX, centerY, baseRadius, "0", "Total");
-            return;
-        }
+        if (segments.isEmpty() || totalValue == 0) return;
 
         float currentAngle = 270f;
         for (int i = 0; i < segments.size(); i++) {
             Segment s = segments.get(i);
             float sweep = (s.value / totalValue) * 360f;
             float radius = baseRadius * s.scale;
+            // 如果被选中，稍微增加半径实现“弹出”效果
+            if (i == selectedIndex) radius += 15f;
+
             RectF rect = new RectF(centerX - radius, centerY - radius, centerX + radius, centerY + radius);
             slicePaint.setColor(s.color);
             canvas.drawArc(rect, currentAngle, sweep, true, slicePaint);
@@ -122,7 +120,7 @@ public class DonutPieChart extends View {
     }
 
     private void drawCenter(Canvas canvas, float cx, float cy, float rad, String main, String sub) {
-        canvas.drawCircle(cx, cy, rad * 0.5f, centerPaint);
+        canvas.drawCircle(cx, cy, rad * 0.6f, centerPaint);
         float offset = (textPaint.descent() + textPaint.ascent()) / 2;
         canvas.drawText(main, cx, cy - offset - 15, textPaint);
         canvas.drawText(sub, cx, cy - offset + 45, subTextPaint);

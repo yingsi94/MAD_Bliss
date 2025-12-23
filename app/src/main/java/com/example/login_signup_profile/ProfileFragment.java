@@ -95,10 +95,16 @@ public class ProfileFragment extends Fragment {
     }
 
     private void setupClickListeners() {
+        // 1. 跳转到修改密码 (Fragment 切换)
         llChangePassword.setOnClickListener(v -> {
-            startActivity(new Intent(getContext(), ChangePasswordFragment.class));
+            getParentFragmentManager().beginTransaction()
+                    .setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out)
+                    .replace(R.id.fragment_container, new ChangePasswordFragment())
+                    .addToBackStack(null)
+                    .commit();
         });
 
+        // 2. 退出登录 (Activity 跳转 - 保持现状)
         llLogout.setOnClickListener(v -> {
             auth.signOut();
             Intent intent = new Intent(getContext(), LoginActivity.class);
@@ -106,12 +112,22 @@ public class ProfileFragment extends Fragment {
             startActivity(intent);
         });
 
+        // 3. 跳转到编辑资料 (Fragment 切换并传递数据)
         btnEditProfile.setOnClickListener(v -> {
-            Intent i = new Intent(getContext(), EditProfileFragment.class);
-            i.putExtra("fullName", fullName.getText().toString());
-            i.putExtra("email", email.getText().toString());
-            i.putExtra("phone", phone.getText().toString());
-            startActivity(i);
+            EditProfileFragment editFragment = new EditProfileFragment();
+
+            // 封装数据到 Bundle
+            Bundle args = new Bundle();
+            args.putString("fullName", fullName.getText().toString());
+            args.putString("email", email.getText().toString());
+            args.putString("phone", phone.getText().toString());
+            editFragment.setArguments(args);
+
+            getParentFragmentManager().beginTransaction()
+                    .setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out)
+                    .replace(R.id.fragment_container, editFragment)
+                    .addToBackStack(null)
+                    .commit();
         });
     }
 }

@@ -4,9 +4,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -29,13 +27,11 @@ import java.util.Map;
 public class MoodDistributionFragment extends Fragment {
 
     private DonutPieChart donutChart;
-    private TextView tvDateRange;
+    private TextView tvDateRange, tvEmptyState;
     private FirebaseFirestore db;
     private Calendar displayCalendar;
 
-    public MoodDistributionFragment() {
-        // Required empty public constructor
-    }
+    public MoodDistributionFragment() {}
 
     @Nullable
     @Override
@@ -53,27 +49,24 @@ public class MoodDistributionFragment extends Fragment {
 
         donutChart = view.findViewById(R.id.donutChart);
         tvDateRange = view.findViewById(R.id.tvDateRange);
+        tvEmptyState = view.findViewById(R.id.tvEmptyState);
 
-        // --- 返回逻辑 ---
-
-        // 1. Back 按钮和 "Back" 文字：直接回到 Home Fragment
-        View.OnClickListener backToHomeListener = v -> {
+        // --- 返回 Home 逻辑 ---
+        View.OnClickListener backHomeListener = v -> {
             if (getActivity() != null) {
-                // 清空堆栈，回到最底层的 Home Fragment
-                getActivity().getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                // POP_BACK_STACK_INCLUSIVE 会弹出所有记录，直到回到 MainActivity 默认显示的 Home
+                getParentFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
             }
         };
-        view.findViewById(R.id.btnBack).setOnClickListener(backToHomeListener);
-        view.findViewById(R.id.tvBack).setOnClickListener(backToHomeListener);
+        view.findViewById(R.id.btnBack).setOnClickListener(backHomeListener);
+        view.findViewById(R.id.tvBack).setOnClickListener(backHomeListener);
 
-        // 2. Weekly Summary 选项卡：回退到上一层（通常是周摘要页面）
+        // --- 返回 Weekly Summary (上一级) ---
         view.findViewById(R.id.tabWeeklySummary).setOnClickListener(v -> {
-            if (getParentFragmentManager() != null) {
-                getParentFragmentManager().popBackStack();
-            }
+            getParentFragmentManager().popBackStack();
         });
 
-        // --- 周切换逻辑 ---
+        // 周切换
         view.findViewById(R.id.btnPrevWeek).setOnClickListener(v -> shiftWeek(-1));
         view.findViewById(R.id.btnNextWeek).setOnClickListener(v -> shiftWeek(1));
 
@@ -121,14 +114,20 @@ public class MoodDistributionFragment extends Fragment {
     }
 
     private void updateChart(Map<String, Integer> counts, int total) {
-        List<DonutPieChart.Segment> segments = new ArrayList<>();
-        if (total > 0) {
+        if (total == 0) {
+            donutChart.setVisibility(View.GONE);
+            tvEmptyState.setVisibility(View.VISIBLE);
+        } else {
+            donutChart.setVisibility(View.VISIBLE);
+            tvEmptyState.setVisibility(View.GONE);
+
+            List<DonutPieChart.Segment> segments = new ArrayList<>();
             addIf(segments, counts, "happy", "#8979FF", 1.0f, "Happy");
             addIf(segments, counts, "calm", "#FF928A", 0.9f, "Calm");
             addIf(segments, counts, "sad", "#3CC3DF", 0.85f, "Sad");
             addIf(segments, counts, "stressed", "#FFAE4C", 0.8f, "Stressed");
+            donutChart.setSegments(segments);
         }
-        donutChart.setSegments(segments);
     }
 
     private void addIf(List<DonutPieChart.Segment> list, Map<String, Integer> counts, String key, String color, float scale, String label) {

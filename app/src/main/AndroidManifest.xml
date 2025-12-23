@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -16,14 +17,6 @@
         android:theme="@style/Theme.Bliss">
 
         <activity
-            android:name="com.example.main.MainActivity"
-            android:exported="false"
-            android:windowSoftInputMode="adjustPan"/>
-
-        <activity android:name="com.example.login_signup_profile.ForgotPasswordActivity"/>
-        <activity android:name="com.example.login_signup_profile.SignUpActivity"/>
-
-        <activity
             android:name="com.example.login_signup_profile.LoginActivity"
             android:exported="true"
             android:launchMode="singleTask">
@@ -32,6 +25,24 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity
+            android:name="com.example.main.MainActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustPan"/>
+
+        <activity android:name="com.example.login_signup_profile.ForgotPasswordActivity"/>
+        <activity android:name="com.example.login_signup_profile.SignUpActivity"/>
+
+        <activity android:name="com.example.bliss.AddJournalActivity"/>
+        <activity android:name="com.example.bliss.CalendarActivity"/>
+        <activity android:name="com.example.bliss.FullScreenImageActivity"/>
+        <activity android:name="com.example.bliss.JournalDetailActivity"/>
+
+        <activity android:name="com.example.music.MusicSuggestionActivity" />
+        <activity android:name="com.example.music.PlaylistSongActivity" />
+
+        <activity android:name="com.example.relaxation.AddEditGoalActivity" />
 
         <meta-data
             android:name="CLOUDINARY_URL"

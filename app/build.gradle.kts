@@ -32,6 +32,11 @@ android {
             "GOOGLE_API_KEY",
             "\"${localProperties.getProperty("GOOGLE_API_KEY")}\""
         )
+
+        // Cloudinary Credentials
+        buildConfigField("String", "CLOUDINARY_CLOUD_NAME", "\"${localProperties.getProperty("CLOUDINARY_CLOUD_NAME")}\"")
+        buildConfigField("String", "CLOUDINARY_API_KEY", "\"${localProperties.getProperty("CLOUDINARY_API_KEY")}\"")
+        buildConfigField("String", "CLOUDINARY_API_SECRET", "\"${localProperties.getProperty("CLOUDINARY_API_SECRET")}\"")
     }
 
     buildFeatures {
