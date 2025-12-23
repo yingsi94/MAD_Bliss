@@ -241,17 +241,23 @@ public class RelaxationFragment extends Fragment {
                 return;
             }
 
-            Intent intent = new Intent(getActivity(), MeditationPlayerFragment.class);
-            intent.putExtra("duration", totalSeconds);
-            intent.putExtra("musicId", selectedMusicId);
-            intent.putExtra("musicName", selectedMusicName);
-            intent.putExtra("musicUrl", selectedMusicUrl);
-            intent.putExtra("themeId", selectedThemeId);
-            intent.putExtra("themeName", selectedThemeName);
-            intent.putStringArrayListExtra("themeTexts",
+            MeditationPlayerFragment playerFragment = new MeditationPlayerFragment();
+            Bundle args = new Bundle();
+            args.putInt("duration", totalSeconds);
+            args.putString("musicId", selectedMusicId);
+            args.putString("musicName", selectedMusicName);
+            args.putString("musicUrl", selectedMusicUrl);
+            args.putString("themeId", selectedThemeId);
+            args.putString("themeName", selectedThemeName);
+            args.putStringArrayList("themeTexts",
                     selectedThemeTexts != null ? new ArrayList<>(selectedThemeTexts) : new ArrayList<>());
-            intent.putExtra("breathingGuide", switchBreathingGuide.isChecked());
-            startActivity(intent);
+            args.putBoolean("breathingGuide", switchBreathingGuide.isChecked());
+            playerFragment.setArguments(args);
+
+            getParentFragmentManager().beginTransaction()
+                    .replace(R.id.fragment_container, playerFragment)
+                    .addToBackStack(null)
+                    .commit();
         });
     }
 

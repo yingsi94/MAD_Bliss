@@ -221,12 +221,49 @@ public class EditProfileFragment extends Fragment {
                             Toast.makeText(getContext(), "Password is required.", Toast.LENGTH_SHORT).show();
                             return;
                         }
-                        AuthCredential credential = EmailAuthProvider.getCredential(user.getEmail(), password);
-                        user.reauthenticate(credential).addOnSuccessListener(aVoid -> {
-                            updateEmailInAuthAndFirestore(newEmail, newFullName, newPhone);
-                        }).addOnFailureListener(e -> {
-                            Toast.makeText(getContext(), "Authentication failed.", Toast.LENGTH_SHORT).show();
-                        });
+                        
+                        // Check if user has a password provider (Email/Password)
+                        boolean isEmailProvider = false;
+                        for (com.google.firebase.auth.UserInfo profile : user.getProviderData()) {
+                            if (EmailAuthProvider.PROVIDER_ID.equals(profile.getProviderId())) {
+                                isEmailProvider = true;
+                                break;
+                            }
+                        }
+
+                        if (isEmailProvider) {
+                            AuthCredential credential = EmailAuthProvider.getCredential(user.getEmail(), password);
+                            user.reauthenticate(credential).addOnSuccessListener(aVoid -> {
+                                // Re-authentication successful
+                                user.verifyBeforeUpdateEmail(newEmail).addOnSuccessListener(unused -> {
+                                    Toast.makeText(getContext(), "Verification email sent to " + newEmail + ". Please verify to complete the update.", Toast.LENGTH_LONG).show();
+                                    
+                                    // Do NOT update email in Firestore yet. Wait for verification.
+                                    // Only update name and phone for now.
+                                    updateFirestoreDataOnly(newFullName, newPhone);
+                                }).addOnFailureListener(e -> {
+                                    Log.w(TAG, "verifyBeforeUpdateEmail failed", e);
+                                    // Fallback: If verification flow fails, try direct update
+                                    updateEmailInAuthAndFirestore(newEmail, newFullName, newPhone);
+                                });
+                            }).addOnFailureListener(e -> {
+                                Log.e(TAG, "Re-authentication failed", e);
+                                Toast.makeText(getContext(), "Authentication failed: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                            });
+                        } else {
+                            // For Google/Facebook sign-in users, re-auth flow is different or email update might not be supported directly
+                            // Try verifyBeforeUpdateEmail if available or just update Firestore if Auth update fails
+                             user.verifyBeforeUpdateEmail(newEmail).addOnSuccessListener(aVoid -> {
+                                 Toast.makeText(getContext(), "Verification email sent to " + newEmail + ". Please verify to update.", Toast.LENGTH_LONG).show();
+                                 // Optionally update Firestore pending verification or wait
+                                 updateFirestoreDataOnly(newFullName, newPhone);
+                             }).addOnFailureListener(e -> {
+                                 Log.e(TAG, "verifyBeforeUpdateEmail failed", e);
+                                 // Fallback: Just update Firestore if Auth update is strictly not supported/allowed
+                                 Toast.makeText(getContext(), "Email update not supported for this account type. Updating profile info only.", Toast.LENGTH_LONG).show();
+                                 updateFirestoreDataOnly(newFullName, newPhone);
+                             });
+                        }
                     }
                 })
                 .setNegativeButton("Cancel", null)
@@ -244,7 +281,13 @@ public class EditProfileFragment extends Fragment {
             documentRef.update(edited).addOnSuccessListener(aVoid -> {
                 Toast.makeText(getContext(), "Profile Updated Successfully", Toast.LENGTH_SHORT).show();
                 if (getFragmentManager() != null) getFragmentManager().popBackStack();
+            }).addOnFailureListener(e -> {
+                Log.e(TAG, "Firestore update failed", e);
+                Toast.makeText(getContext(), "Failed to update profile data: " + e.getMessage(), Toast.LENGTH_SHORT).show();
             });
+        }).addOnFailureListener(e -> {
+            Log.e(TAG, "Email update failed", e);
+            Toast.makeText(getContext(), "Failed to update email: " + e.getMessage(), Toast.LENGTH_SHORT).show();
         });
     }
 
@@ -257,6 +300,9 @@ public class EditProfileFragment extends Fragment {
         documentRef.update(edited).addOnSuccessListener(unused -> {
             Toast.makeText(getContext(), "Profile Updated Successfully", Toast.LENGTH_SHORT).show();
             if (getFragmentManager() != null) getFragmentManager().popBackStack();
+        }).addOnFailureListener(e -> {
+            Log.e(TAG, "Firestore update failed", e);
+            Toast.makeText(getContext(), "Failed to update profile: " + e.getMessage(), Toast.LENGTH_SHORT).show();
         });
     }
 }

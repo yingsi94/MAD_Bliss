@@ -36,23 +36,43 @@ public class GeminiHelper {
                 "Title: " + title + "\n" +
                 "Content: " + content;
 
-        android.util.Log.d("GeminiHelper", "Sending prompt to Gemini: " + prompt);
+        android.util.Log.d("GeminiHelper", "Sending prompt to Gemini. Prompt length=" + prompt.length());
 
         Content userContent = new Content.Builder()
                 .addText(prompt)
                 .build();
 
-        ListenableFuture<GenerateContentResponse> response = model.generateContent(userContent);
+        final ListenableFuture<GenerateContentResponse> response;
+        try {
+            response = model.generateContent(userContent);
+        } catch (Throwable t) {
+            android.util.Log.e("GeminiHelper", "Failed to start generateContent", t);
+            callback.onAnalysisFailure(t);
+            return;
+        }
 
         Futures.addCallback(response, new FutureCallback<GenerateContentResponse>() {
             @Override
             public void onSuccess(GenerateContentResponse result) {
+                if (result == null) {
+                    android.util.Log.e("GeminiHelper", "GenerateContentResponse is null");
+                    callback.onAnalysisFailure(new NullPointerException("GenerateContentResponse is null"));
+                    return;
+                }
+
                 String text = result.getText();
+                if (text == null || text.trim().isEmpty()) {
+                    android.util.Log.w("GeminiHelper", "Empty text returned from Gemini. Full response: " + result);
+                    callback.onAnalysisFailure(new IllegalStateException("Empty response from Gemini"));
+                    return;
+                }
+
                 callback.onAnalysisSuccess(text);
             }
 
             @Override
             public void onFailure(Throwable t) {
+                android.util.Log.e("GeminiHelper", "Generation failed", t);
                 callback.onAnalysisFailure(t);
             }
         }, executor);
