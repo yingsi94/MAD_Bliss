@@ -3,7 +3,9 @@ import java.io.FileInputStream
 
 plugins {
     alias(libs.plugins.android.application)
+    alias(libs.plugins.kotlin.android)
     alias(libs.plugins.google.services)
+    alias(libs.plugins.kotlin.compose)
 }
 
 val localProperties = Properties()
@@ -14,9 +16,7 @@ if (localPropertiesFile.exists()) {
 
 android {
     namespace = "com.example.bliss"
-    compileSdk {
-        version = release(36)
-    }
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.example.bliss"
@@ -27,16 +27,21 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
-        // From INCOMING BRANCH
         buildConfigField(
             "String",
             "GOOGLE_API_KEY",
             "\"${localProperties.getProperty("GOOGLE_API_KEY")}\""
         )
+
+        // Cloudinary Credentials
+        buildConfigField("String", "CLOUDINARY_CLOUD_NAME", "\"${localProperties.getProperty("CLOUDINARY_CLOUD_NAME")}\"")
+        buildConfigField("String", "CLOUDINARY_API_KEY", "\"${localProperties.getProperty("CLOUDINARY_API_KEY")}\"")
+        buildConfigField("String", "CLOUDINARY_API_SECRET", "\"${localProperties.getProperty("CLOUDINARY_API_SECRET")}\"")
     }
 
     buildFeatures {
         buildConfig = true
+        compose = true
     }
 
     buildTypes {
@@ -48,19 +53,27 @@ android {
             )
         }
     }
-
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
+    }
+    kotlinOptions {
+        jvmTarget = "11"
     }
 }
 
 dependencies {
     // Core UI
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
     implementation(libs.appcompat)
     implementation(libs.material)
     implementation(libs.activity)
     implementation(libs.constraintlayout)
+    implementation(libs.cardview)
+
+    // MPAndroidChart
+    implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
 
     // Compose (from your version)
     implementation(libs.activity.compose)
@@ -92,6 +105,7 @@ dependencies {
     implementation("com.cloudinary:cloudinary-android:3.1.2") // your version
 
     // Tests
+    implementation("androidx.recyclerview:recyclerview:1.3.0")
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
