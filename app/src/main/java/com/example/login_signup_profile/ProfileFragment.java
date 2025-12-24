@@ -9,6 +9,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -16,12 +17,15 @@ import androidx.fragment.app.Fragment;
 
 import com.example.bliss.R;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.squareup.picasso.Picasso;
+
+import com.google.firebase.firestore.ListenerRegistration;
 
 public class ProfileFragment extends Fragment {
 
@@ -35,6 +39,7 @@ public class ProfileFragment extends Fragment {
     private FirebaseAuth auth;
     private FirebaseFirestore store;
     private String userId;
+    private ListenerRegistration userListener;
 
     // Fragment 必须有一个空的构造函数
     public ProfileFragment() {}
@@ -72,19 +77,61 @@ public class ProfileFragment extends Fragment {
         setupClickListeners();
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        
+        FirebaseUser currentUser = auth.getCurrentUser();
+        if (currentUser == null) {
+            // User is logged out, redirect to Login
+            Toast.makeText(requireContext(), "Session expired. Please log in again.", Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(requireContext(), LoginActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
+            return;
+        }
+        
+        // Ensure userId is set
+        if (userId == null) {
+            userId = currentUser.getUid();
+        }
+        
+        // Load user data - email change detection is now handled globally in MainActivity
+        loadUserData();
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        if (userListener != null) {
+            userListener.remove();
+            userListener = null;
+        }
+    }
+
     private void loadUserData() {
+        if (userId == null) return;
         DocumentReference documentReference = store.collection("users").document(userId);
-        // 使用 getViewLifecycleOwner() 替代 this，确保 Fragment 销毁时自动取消监听
-        documentReference.addSnapshotListener(requireActivity(), new EventListener<DocumentSnapshot>() {
+        
+        // Remove previous listener if exists
+        if (userListener != null) {
+            userListener.remove();
+        }
+
+        // Use manual listener management instead of Activity-scoped to avoid FragmentManager transaction issues
+        userListener = documentReference.addSnapshotListener(new EventListener<DocumentSnapshot>() {
             @Override
             public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException e) {
+                if (e != null) {
+                    return;
+                }
                 if (documentSnapshot != null && documentSnapshot.exists()) {
-                    fullName.setText(documentSnapshot.getString("fullName"));
-                    email.setText(documentSnapshot.getString("email"));
-                    phone.setText(documentSnapshot.getString("phone"));
+                    if (fullName != null) fullName.setText(documentSnapshot.getString("fullName"));
+                    if (email != null) email.setText(documentSnapshot.getString("email"));
+                    if (phone != null) phone.setText(documentSnapshot.getString("phone"));
 
                     String imageUrl = documentSnapshot.getString("profileImageUrl");
-                    if (imageUrl != null && !imageUrl.isEmpty()) {
+                    if (imageUrl != null && !imageUrl.isEmpty() && profilePicture != null) {
                         Picasso.get().load(imageUrl)
                                 .placeholder(R.mipmap.ic_launcher)
                                 .into(profilePicture);

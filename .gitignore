@@ -18,8 +18,10 @@ local.properties
 /captures
 .externalNativeBuild
 .cxx
-.log
+local.properties
 app/google-services.json
+.idea/
+.log
 *.apk
 *.aab
 *.jks

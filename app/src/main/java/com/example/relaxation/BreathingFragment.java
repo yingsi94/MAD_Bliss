@@ -16,7 +16,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.NumberPicker;
-import android.widget.ScrollView;
+import androidx.core.widget.NestedScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -167,14 +167,17 @@ public class BreathingFragment extends Fragment {
     private void setupListeners(View rootView) {
         // 跳转回 Meditation (现在应该是 RelaxationFragment 或其 Activity)
         btnMeditation.setOnClickListener(v -> {
-            // 如果你的主界面也是用 Fragment 切换，请联系我更换此处逻辑
-            Intent intent = new Intent(getActivity(), RelaxationFragment.class);
-            startActivity(intent);
+            getParentFragmentManager().beginTransaction()
+                    .replace(R.id.fragment_container, new RelaxationFragment())
+                    .addToBackStack(null)
+                    .commit();
         });
 
         btnGoals.setOnClickListener(v -> {
-            Intent intent = new Intent(getActivity(), GoalsFragment.class);
-            startActivity(intent);
+            getParentFragmentManager().beginTransaction()
+                    .replace(R.id.fragment_container, new GoalsFragment())
+                    .addToBackStack(null)
+                    .commit();
         });
 
         btnStart.setOnClickListener(v -> {
@@ -190,8 +193,10 @@ public class BreathingFragment extends Fragment {
                 settingsPanel.setVisibility(View.GONE);
             } else {
                 settingsPanel.setVisibility(View.VISIBLE);
-                final ScrollView scrollView = rootView.findViewById(R.id.scrollView);
-                scrollView.post(() -> scrollView.smoothScrollTo(0, settingsPanel.getBottom()));
+                final NestedScrollView scrollView = rootView.findViewById(R.id.scrollView);
+                if (scrollView != null) {
+                    scrollView.post(() -> scrollView.smoothScrollTo(0, settingsPanel.getBottom()));
+                }
             }
         });
 

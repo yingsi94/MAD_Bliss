@@ -38,6 +38,7 @@
         <activity android:name="com.example.bliss.CalendarActivity"/>
         <activity android:name="com.example.bliss.FullScreenImageActivity"/>
         <activity android:name="com.example.bliss.JournalDetailActivity"/>
+        <activity android:name="com.example.bliss.ai.ChatActivity" />
 
         <activity android:name="com.example.music.MusicSuggestionActivity" />
         <activity android:name="com.example.music.PlaylistSongActivity" />

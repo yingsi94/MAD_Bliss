@@ -250,7 +250,7 @@ public class CalendarActivity extends AppCompatActivity {
 
         private int getMoodIconResource(String mood) {
             if (mood == null) return R.drawable.neutral;
-            String lowerMood = mood.toLowerCase();
+            String lowerMood = mood.toLowerCase(Locale.ROOT);
             if (lowerMood.contains("happy")) {
                 return R.drawable.happy;
             } else if (lowerMood.contains("sad")) {

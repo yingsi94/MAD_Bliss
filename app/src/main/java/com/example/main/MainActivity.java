@@ -11,8 +11,12 @@ import com.example.bliss.R;
 import com.example.bliss.JournalListFragment;
 import com.example.login_signup_profile.ProfileFragment;
 import com.example.relaxation.RelaxationFragment;
+import com.example.chatbox.AIChatbotFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -56,8 +60,69 @@ public class MainActivity extends AppCompatActivity {
 
         // 3. FAB 聊天按钮逻辑
         fabChat.setOnClickListener(v -> {
-            Toast.makeText(this, "Opening AI Assistant...", Toast.LENGTH_SHORT).show();
-            // 如果有 ChatActivity，可以使用 Intent 跳转
+            replaceFragment(new AIChatbotFragment(), true);
+            // Deselect bottom nav items since we are in a special fragment
+            bottomNav.getMenu().setGroupCheckable(0, false, true);
+        });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        
+        // Skip email change detection if we just logged in
+        if (getIntent().getBooleanExtra("from_login", false)) {
+            getIntent().removeExtra("from_login"); // Clear the flag
+            return;
+        }
+        
+        FirebaseAuth auth = FirebaseAuth.getInstance();
+        FirebaseUser currentUser = auth.getCurrentUser();
+        
+        if (currentUser == null) {
+            // User is logged out, redirect to Login
+            Intent intent = new Intent(this, com.example.login_signup_profile.LoginActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
+            return;
+        }
+        
+        // Check if email was verified and updated in Auth
+        currentUser.reload().addOnSuccessListener(aVoid -> {
+            FirebaseUser user = auth.getCurrentUser();
+            if (user != null) {
+                String authEmail = user.getEmail();
+                
+                // Get current email from Firestore to compare
+                FirebaseFirestore store = FirebaseFirestore.getInstance();
+                String userId = user.getUid();
+                store.collection("users").document(userId).get().addOnSuccessListener(documentSnapshot -> {
+                    if (documentSnapshot.exists()) {
+                        String firestoreEmail = documentSnapshot.getString("email");
+                        
+                        // If Auth email is different from Firestore, it means verification happened
+                        if (authEmail != null && firestoreEmail != null && !authEmail.equals(firestoreEmail)) {
+                             // Sync to Firestore and Logout
+                             store.collection("users").document(userId).update("email", authEmail)
+                                 .addOnSuccessListener(unused -> {
+                                     auth.signOut();
+                                     Toast.makeText(this, "Email verified! Please log in again.", Toast.LENGTH_LONG).show();
+                                     Intent intent = new Intent(this, com.example.login_signup_profile.LoginActivity.class);
+                                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                     startActivity(intent);
+                                 });
+                        }
+                    }
+                });
+            }
+        }).addOnFailureListener(e -> {
+            // If reload fails (e.g. session invalid), redirect to login
+            if (e instanceof com.google.firebase.auth.FirebaseAuthInvalidUserException) {
+                Toast.makeText(this, "Security Update: Please log in with your new email.", Toast.LENGTH_LONG).show();
+                Intent intent = new Intent(this, com.example.login_signup_profile.LoginActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(intent);
+            }
         });
     }
 
