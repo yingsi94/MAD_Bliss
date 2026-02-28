@@ -38,8 +38,6 @@ The system focuses on **preventive mental health care** through consistent refle
 | Notifications | Android Notification API |
 | Testing | User Acceptance Testing (UAT) |
 
----
-
 ## 🔹 Google Technologies Used
 
 ### 1️⃣ Firebase Authentication
@@ -103,8 +101,6 @@ app/src/main/java/com/example/
 - Mood distribution visualized via charts  
 - RecyclerView used for history display  
 
----
-
 ## 2️⃣ Journal with AI Mood Detection
 
 - Users create daily journal entries  
@@ -113,16 +109,12 @@ app/src/main/java/com/example/
 - Calendar-based journal retrieval  
 - Media stored via Cloudinary URLs  
 
----
-
 ## 3️⃣ Mood-Based Music Recommendation
 
 - Songs tagged with mood category  
 - Firestore filtered query by mood  
 - Audio streamed via Cloudinary  
 - Optimized app size via external hosting  
-
----
 
 ## 4️⃣ Relaxation & Goal Tracking
 
@@ -133,8 +125,6 @@ app/src/main/java/com/example/
   - Completion state  
   - Progress percentage  
 - Visual progress feedback  
-
----
 
 ## 5️⃣ AI Chatbot
 
@@ -158,12 +148,8 @@ Bliss combines:
 
 All within one structured platform.
 
----
-
 ### 🔹 AI-Enhanced Emotional Reflection
 Journal entries are actively analyzed to provide personalized well-being suggestions.
-
----
 
 ### 🔹 Preventive Mental Health Model
 Encourages:
@@ -171,8 +157,6 @@ Encourages:
 - Pattern recognition  
 - Habit formation  
 - Proactive self-care  
-
----
 
 ### 🔹 Privacy-Centered Design
 - No public sharing features  
@@ -193,8 +177,6 @@ Encourages:
 - Updated UI after data loading completion  
 - Managed lifecycle-aware data loading  
 
----
-
 ## 2️⃣ AI Mood Detection Limitations
 
 **Challenge:** Keyword-based detection may misinterpret complex emotions  
@@ -204,8 +186,6 @@ Encourages:
 - Added fallback suggestion logic  
 - Included transparent disclaimer  
 
----
-
 ## 3️⃣ Media Optimization
 
 **Challenge:** Large local audio files increased APK size  
@@ -214,8 +194,6 @@ Encourages:
 - Offloaded media to Cloudinary  
 - Streamed audio via URL  
 - Improved performance and scalability  
-
----
 
 ## 4️⃣ Data Consistency Across Modules
 
@@ -242,8 +220,6 @@ All modules validated:
 - Emergency Support  
 
 All passed.
-
----
 
 ## Non-Functional Testing
 
